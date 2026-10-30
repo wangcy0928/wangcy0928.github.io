@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Changyu Wang | Personal Projects</title>
-<meta name="description" content="Changyu Wang portfolio: robotics, mechanical design, AI-built prototypes and tech x business.">
+<meta name="description" content="Changyu Wang portfolio: robotics, mechanical design and research projects.">
 <meta property="og:title" content="Changyu Wang | Personal Projects">
 <meta property="og:type" content="website">
 <script>try{var t=localStorage.getItem('cw-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
@@ -66,7 +66,7 @@ h1,h2,h3{line-height:1.12;text-wrap:balance}
 .meta a:hover,.meta button.copy:hover{color:var(--accent-warm)}
 .email{font-family:var(--mono);font-size:14px;user-select:all;color:var(--text)}
 
-.index{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:min(980px,100%);margin:26px auto 0}
+.index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(720px,100%);margin:26px auto 0}
 .index h2{font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
 .index ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .index a{color:var(--accent);font-weight:600;font-size:15px}
@@ -173,73 +173,49 @@ sic:'<svg viewBox="0 0 320 160" fill="none" stroke="currentColor" stroke-width="
 var CAT={robo:['Robotics & hardware','#0E7490'],ai:['AI-built','#1D4ED8'],biz:['Tech × business','#7C3AED']};
 
 var I={
- en:{title:'Changyu Wang · Personal Projects',tagline:'Robotics · Mechatronics · Mechanical Design · Tech × Business',school:'M.S.E. Mechanical Engineering, UPenn · graduating May 2027',contact:'Contact:',copy:'Copy',copied:'Copied',foot:'Open to full-time roles in the US and China.',
-   g:{robo:'Robotics & Hardware',ai:'AI-Built Prototypes',biz:'Tech × Business'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗'},
- zh:{title:'王长宇 · 个人作品集',tagline:'机器人 · 机电一体化 · 机械设计 · 技术 × 商业',school:'宾夕法尼亚大学 机械工程与应用力学硕士 · 2027 年 5 月毕业',contact:'联系：',copy:'复制',copied:'已复制',foot:'正在寻找中美两地的全职机会。',
-   g:{robo:'机器人与硬件',ai:'AI 辅助开发原型',biz:'技术 × 商业'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗'}
+ en:{title:'Changyu Wang · Personal Projects',tagline:'Robotics · Mechatronics · Mechanical Design',school:'M.S. Mechanical Engineering & Applied Mechanics, UPenn · graduating Jun 2027',contact:'Contact:',copy:'Copy',copied:'Copied',foot:'Open to full-time roles in the US and China.',
+   g:{robo:'Robotics & Hardware',data:'Research & Data'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗'},
+ zh:{title:'王长宇 · 个人作品集',tagline:'机器人 · 机电一体化 · 机械设计',school:'宾夕法尼亚大学 机械工程与应用力学硕士 · 2027 年 6 月毕业',contact:'联系：',copy:'复制',copied:'已复制',foot:'正在寻找中美两地的全职机会。',
+   g:{robo:'机器人与硬件',data:'科研与数据'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗'}
 };
 var P=[
 {id:'stir',g:'robo',year:'2026',tags:['Franka Panda','Jacobian control','ROS / RViz','Python'],
- t:{en:'Robot Arm Stirring Module',zh:'机械臂搅拌模块'},
- s:{en:'The controller that let a 7-DOF Franka arm stir drinks live at a public GRASP Lab demo.',zh:'让 7 自由度 Franka 机械臂在 GRASP 实验室公开演示中现场搅拌饮品的控制器。'},
- o:{en:'GRASP Lab, UPenn · Jan–May 2026 · Controls lead',zh:'宾大 GRASP 实验室 · 2026 年 1–5 月 · 控制负责人'},
- m:'z-sag 15–20 mm → <2 mm · σ < 1.5 mm · 0 spills',
- b:{en:['A 100 Hz closed-loop Cartesian controller: forward kinematics, pose-error feedback, and a Jacobian pseudo-inverse velocity solve that tracks an elliptical stir path with orientation locked.','Null-space projection re-centers the joints, so the arm does not drift over repeated cycles.','Z-axis integral compensation cut end-effector sag under a 200 g payload from 15–20 mm to under 2 mm. Velocity limits and a low-pass filter removed the resonance of the earlier playback approach.','Result: zero spills and σ < 1.5 mm hand-off repeatability across the full demo day.'],
-    zh:['100 Hz 闭环笛卡尔空间控制器：正运动学 + 位姿误差反馈 + 雅可比伪逆速度求解，在锁定姿态的前提下跟踪椭圆搅拌轨迹。','零空间投影让关节回到中位，多次循环不漂移。','Z 轴积分补偿把 200 g 负载下的末端下沉量从 15–20 mm 压到 2 mm 以内；速度限幅加低通滤波消除了原先离线回放方案的机械共振。','结果：公开演示日全天零洒漏，交接重复性 σ < 1.5 mm。']}},
+ t:{en:'Multi-Arm Robotic Beverage Line: Stirring Module',zh:'多机械臂饮品服务线：搅拌模块'},
+ s:{en:'The controller that let a 7-DOF Franka arm stir drinks live on demo day.',zh:'让 7 自由度 Franka 机械臂在演示日现场搅拌饮品的控制器。'},
+ o:{en:'University of Pennsylvania · Jan–May 2026 · Controls lead, stirring module',zh:'宾夕法尼亚大学 · 2026 年 1–5 月 · 搅拌模块控制负责人'},
+ m:'tool sag 15–20 mm → <2 mm · 100 Hz · 0 spills',
+ b:{en:['A 100 Hz closed-loop Cartesian controller: forward kinematics, pose-error feedback, and a Jacobian pseudo-inverse velocity solve that tracks an elliptical stir path with orientation locked.','Null-space projection re-centers the joints, so the arm does not drift over repeated cycles.','Z-axis integral compensation cut end-effector sag under a 200 g payload from 15–20 mm to under 2 mm. Velocity limits and a low-pass filter removed the resonance of the earlier playback approach.','Programmed trajectory commands and live visualization in ROS/RViz. Result: zero spills across the full demo day.'],
+    zh:['100 Hz 闭环笛卡尔空间控制器：正运动学 + 位姿误差反馈 + 雅可比伪逆速度求解，在锁定姿态的前提下跟踪椭圆搅拌轨迹。','零空间投影让关节回到中位，多次循环不漂移。','Z 轴积分补偿把 200 g 负载下的末端下沉量从 15–20 mm 压到 2 mm 以内；速度限幅加低通滤波消除了原先离线回放方案的机械共振。','用 ROS/RViz 编写轨迹指令与实时可视化。结果：演示日全天零洒漏。']}},
 {id:'soft',g:'robo',year:'2023–24',tags:['Soft robotics','Smart materials','COMSOL','Team lead'],
  t:{en:'Magnetic Soft Robot for Pipe Inspection',zh:'磁控管道检测软体机器人'},
  s:{en:'Led a 5-person team building a soft robot that an electromagnetic field drives through pipe.',zh:'带领 5 人团队研制由电磁场驱动、可在管道内蠕动前进的软体机器人。'},
- o:{en:'NCUT & BJTU Joint Lab · Mar 2023 – Jun 2024 · Project leader, National Undergraduate Innovation Program',zh:'北方工业大学 × 北京交通大学联合实验室 · 2023.03–2024.06 · 国家级大创项目负责人'},
+ o:{en:'NCUT & BJTU Joint Lab · Mar 2023 – Jun 2024 · Project leader, 5-member team · Advisor: Dr. Hanming Zhang',zh:'北方工业大学 × 北京交通大学联合实验室 · 2023.03–2024.06 · 5 人团队项目负责人 · 指导老师：Hanming Zhang 博士'},
  m:'PRC utility patent ZL 2023 2 1674507.6',
  b:{en:['Set the technical route and split the work across the team.','Formulated magnetorheological-fluid and magnetic-sponge composites, and built the compliant body that deforms under the field.','Measured deformation and locomotion with camera tracking, and compared reinforcement designs in COMSOL FEA before going back to the bench.'],
     zh:['确定技术路线并组织团队分工。','配制磁流变液与磁性海绵复合材料，搭建在磁场下产生形变的柔性执行结构。','用相机追踪法测量形变与运动轨迹，并先用 COMSOL 有限元仿真比较加固方案，再回到实验台验证。']},
  cite:'Patent: Tang F., Zhang H., <b>Wang C.</b>, et al. <i>A Peristaltic Pipeline Soft Robot Based on Electromagnetic Control.</i>'},
-{id:'ut',g:'robo',year:'2023–24',tags:['NDT','ANSYS','Mechanical design','Commissioning'],
- t:{en:'Robotic Ultrasonic Inspection Platform',zh:'机器人超声检测平台'},
- s:{en:'Designed and validated a robot-plus-turntable rig for ultrasonic testing of curved metal parts.',zh:'设计并验证用于曲面金属件超声检测的“机械臂 + 转台”平台。'},
- o:{en:'NCUT, Beijing · Apr 2023 – Jun 2024 · Platform structure, rotary table, validation',zh:'北方工业大学 · 2023.04–2024.06 · 负责平台结构、转台与实验验证'},
- m:'IOP conference paper, 2024',
- b:{en:['Co-designed the platform structure, then installed and commissioned the rotary table.','Static FEA in ANSYS on stress, deformation and stiffness confirmed load capacity and shaped the test plan.','Ran coordinated robot and turntable experiments to validate the full inspection workflow.'],
-    zh:['参与平台结构设计，完成转台的安装与调试。','用 ANSYS 做应力、变形、刚度静力学分析，确认承载能力并据此制定测试方案。','开展机械臂与转台协同实验，验证完整检测流程。']},
- cite:'Wang J., Zhang H., Xu H., <b>Wang C.</b>, et al. J. Phys.: Conf. Ser. (IOP), 2024.',
- links:[{k:'doi',u:'https://doi.org/10.1088/1742-6596/2679/1/012006'}]},
-{id:'bus',g:'ai',year:'2026',tags:['UX design','AI-assisted coding','Transit data','Vercel'],
- t:{en:'From Here: A Smarter Bus Stop Screen',zh:'From Here：更聪明的公交站屏幕'},
- s:{en:'A bus stop screen that turns a long wait into nearby places you can actually reach in time.',zh:'把漫长候车变成“这段时间能去哪”的公交站屏幕。'},
- o:{en:'LLMs for UX Prototyping, UPenn · Fall 2026 · Solo: concept, UX, build, deploy',zh:'宾大 LLMs for UX Prototyping 课程 · 2026 秋 · 独立完成概念、交互、开发与部署'},
- m:'Live prototype · built with AI coding tools',
- b:{en:['Designed around one rider question: what can I do with this wait? The screen shows live arrivals, then suggests food, sights and shops that fit the time left.','Rules decide what is reachable in time; the language model only phrases and ranks the candidates the rules allow.','Built for a shared public screen: big touch targets and a layout you can read at a glance.'],
-    zh:['围绕乘客的一个问题来设计：这段等车时间能做什么？屏幕先显示实时到站，再推荐时间够得着的餐饮、景点和商店。','“能不能及时走到”由确定性规则判断；大模型只在规则筛出的候选里负责表述和排序。','面向公共共享屏幕：大触控区域，一眼可读的信息层级。']},
- links:[{k:'demo',u:'https://week3-bay-gamma.vercel.app/'}]},
-{id:'port',g:'ai',year:'2026',tags:['Python','Web crawling','Entity matching','Data QA'],
+{id:'port',g:'data',year:'2026',tags:['Python','Web crawling','Entity matching','Data QA'],
  t:{en:'Yangtze Port Data Pipeline',zh:'长江港口数据管线'},
  s:{en:'A crawl-and-match pipeline that turned scattered public sources into one verified port dataset.',zh:'把分散的公开数据源整理成一份经过核验的港口数据集。'},
- o:{en:'China Waterborne Transport Research Institute · Jul–Aug 2026 · Research intern',zh:'交通运输部水运科学研究院 · 2026 年 7–8 月 · 研究实习生'},
+ o:{en:'Waterborne Transport Research Institute, Intelligent Transport Center · Jul–Aug 2026 · Research intern',zh:'交通运输部水运科学研究院 智能交通中心 · 2026 年 7–8 月 · 研究实习生'},
  m:'75 candidate ports · 1,828 berth records verified',
- b:{en:['The team needed a trustworthy list of Yangtze ports and berths as the base for a berthing and vessel-scheduling agent.','Built and iterated the Python crawlers with AI coding tools, collecting records from several public sources.','Wrote the screening rules, the cross-source matching (one berth, many names) and the quality checks, then verified conflicts by hand.'],
-    zh:['团队需要一份可信的长江港口与泊位清单，作为靠泊与船舶调度智能体的基础数据。','借助 AI 编程工具编写并迭代 Python 爬虫，从多个公开来源采集记录。','制定筛选规则、跨源实体匹配（同一泊位多种名称）与质量核查，矛盾记录人工复核。']},
- note:{en:'Method only. The project data is confidential.',zh:'仅展示方法，项目数据保密。'}},
-{id:'sic',g:'biz',year:'2026',tags:['Due diligence','Valuation','Semiconductors'],
- t:{en:'SiC Chipmaker Investment Case',zh:'碳化硅芯片企业投资案例'},
- s:{en:'Used an engineering lens to judge a silicon-carbide power-chip maker for a financing deal.',zh:'用工程视角评估一家碳化硅功率半导体企业的融资项目。'},
- o:{en:'Northeast Securities, Investment Banking · May–Jul 2026 · Asst. investment manager intern',zh:'东北证券 投资银行部 · 2026 年 5–7 月 · 投资经理助理实习生'},
- m:'29-page business plan · P/B comparables',
- b:{en:['Wrote the company research report and review materials for a SiC power-semiconductor IDM, and co-produced its 29-page financing business plan.','Valued the target with P/B comparables across four listed peers, and assessed deal structure, risk controls and exit options.','Read the device roadmap, fab process and 6"/8" line yield and capacity ramp, then turned them into calls on commercialization timing, cost and risk.'],
-    zh:['为一家 SiC 功率半导体 IDM 撰写公司研究报告与评审材料，参与编写 29 页融资商业计划书。','选取四家上市可比公司做 P/B 估值，评估交易结构、风控措施与退出路径。','解读器件路线、晶圆工艺以及 6/8 英寸产线良率与产能爬坡，转化为对商业化节奏、成本和风险的判断。']}}
+ b:{en:['The team needed a trustworthy list of Yangtze ports and berths as the base for a berthing and vessel-scheduling agent.','Built Python web crawlers that collected records from several public sources.','Wrote the screening rules, the cross-source matching (one berth, many names) and the quality checks, then verified conflicts by hand.'],
+    zh:['团队需要一份可信的长江港口与泊位清单，作为靠泊与船舶调度智能体的基础数据。','编写 Python 爬虫，从多个公开来源采集记录。','制定筛选规则、跨源实体匹配（同一泊位多种名称）与质量核查，矛盾记录人工复核。']},
+ note:{en:'Method only. The project data is confidential.',zh:'仅展示方法，项目数据保密。'}}
 ];
 var EDU={
- en:[['University of Pennsylvania','M.S.E. Mechanical Engineering & Applied Mechanics · Robotics','2025 – 2027'],['Brunel University London & North China University of Technology','Dual B.Eng. Mechanical Engineering · First-Class Honours · Outstanding Graduate','2021 – 2025']],
- zh:[['宾夕法尼亚大学','机械工程与应用力学硕士 · 机器人方向','2025 – 2027'],['伦敦布鲁内尔大学 × 北方工业大学','机械工程双学士 · 一等荣誉学位 · 优秀毕业生','2021 – 2025']]};
+ en:[['University of Pennsylvania','M.S. Mechanical Engineering & Applied Mechanics · Mechatronic and Robotic Systems','Aug 2025 – Jun 2027'],['North China University of Technology','B.Eng. Mechanical Design, Manufacturing & Automation · GPA 3.64/4.0 · University Scholarship (3 years) · Outstanding Graduate','Sep 2021 – Jun 2025'],['Brunel University of London (joint dual-degree)','B.Eng. Mechanical Engineering · First-Class Honours','Sep 2021 – Jun 2025']],
+ zh:[['宾夕法尼亚大学','机械工程与应用力学硕士 · 机电与机器人系统方向','2025.08 – 2027.06'],['北方工业大学','机械设计制造及其自动化 学士 · GPA 3.64/4.0 · 连续三年校级奖学金 · 优秀毕业生','2021.09 – 2025.06'],['伦敦布鲁内尔大学（双学位联合培养）','机械工程 学士 · 一等荣誉学位','2021.09 – 2025.06']]};
 var SK={
- en:[['CAD & simulation','SolidWorks, Fusion 360, Onshape, Rhino, ANSYS, COMSOL, ADAMS'],['Code & robotics','Python, MATLAB, C++, ROS / RViz, Unreal Engine 4, AI-assisted coding'],['Business','Company research, comparables valuation, business plans'],['Languages','Mandarin (native), English (fluent)']],
- zh:[['CAD 与仿真','SolidWorks、Fusion 360、Onshape、Rhino、ANSYS、COMSOL、ADAMS'],['编程与机器人','Python、MATLAB、C++、ROS / RViz、Unreal Engine 4、AI 辅助编程'],['商业分析','公司研究、可比估值、商业计划书'],['语言','中文（母语）、英语（流利）']]};
+ en:[['CAD & simulation','SolidWorks, Fusion 360, Onshape, Rhino, ANSYS Workbench, COMSOL, ADAMS'],['Programming & analysis','Python, MATLAB, C++, ROS / RViz, Unreal Engine 4'],['Languages','Mandarin (native), English (fluent)']],
+ zh:[['CAD 与仿真','SolidWorks、Fusion 360、Onshape、Rhino、ANSYS Workbench、COMSOL、ADAMS'],['编程与分析','Python、MATLAB、C++、ROS / RViz、Unreal Engine 4'],['语言','中文（母语）、英语（流利）']]};
 
 var lang='en';
 try{ if(localStorage.getItem('cw-lang')==='zh') lang='zh'; }catch(e){}
 try{ var th=localStorage.getItem('cw-theme'); if(th) document.documentElement.dataset.theme=th; }catch(e){}
 function x(f){return typeof f==='string'?f:(f[lang]||f.en)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-var GROUPS=['robo','ai','biz'];
+var GROUPS=['robo','data'];
 
 function render(){
   var L=I[lang];
