@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Changyu Wang | Personal Projects</title>
+<meta name="description" content="Changyu Wang portfolio: robotics, mechanical design, AI-built prototypes and tech x business.">
+<meta property="og:title" content="Changyu Wang | Personal Projects">
+<meta property="og:type" content="website">
+<script>try{var t=localStorage.getItem('cw-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* Layout: centered title block + grouped index + image strip, then full-width split cards (media | text), dark-first with light toggle */
+:root{
+  color-scheme:dark;
+  --bg:#101312; --top:#1a1d1c; --surface:#171a19; --surface-2:#212524;
+  --text:#ecefed; --muted:#b4bdb9; --soft:#828c88; --line:#2f3533;
+  --accent:#2aa3dc; --accent-warm:#f0906a; --go:#17864f; --go-line:#2fbf74; --go-hi:#20a863;
+  --media:#1d2427; --media-ink:#c3ccd2;
+  --shadow:0 18px 44px rgba(0,0,0,.35);
+  --sans:"IBM Plex Sans","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c;
+  --media:#e3e8ea; --media-ink:#3b4a52;
+  --shadow:0 14px 32px rgba(21,24,23,.10);
+}}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c;
+  --media:#e3e8ea; --media-ink:#3b4a52;
+  --shadow:0 14px 32px rgba(21,24,23,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;padding-top:env(safe-area-inset-top,0px);background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3,p{margin:0;overflow-wrap:anywhere}
+h1,h2,h3{line-height:1.12;text-wrap:balance}
+
+/* top */
+.top{position:relative;padding-block:18px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  border-top:6px solid var(--accent);background:linear-gradient(180deg,var(--top),var(--bg) 80%);text-align:center}
+.theme{position:absolute;top:18px;right:max(16px,env(safe-area-inset-right,0px));width:38px;height:38px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);cursor:pointer;font-size:18px;display:grid;place-items:center}
+.theme:hover{border-color:var(--accent);color:var(--accent)}
+.lang{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden;margin-bottom:18px}
+.lang button{min-width:56px;height:34px;border:0;background:transparent;color:var(--accent);cursor:pointer;font-weight:700}
+.lang button+button{border-left:1px solid var(--accent)}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.top h1{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.01em}
+.tagline{margin-top:8px;font-size:clamp(16px,2vw,21px);font-style:italic;font-weight:500;color:var(--text)}
+.meta{margin-top:8px;color:var(--muted);font-size:15px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px}
+.meta a,.meta button.copy{color:var(--accent);background:none;border:0;padding:0;cursor:pointer;font:inherit}
+.meta a:hover,.meta button.copy:hover{color:var(--accent-warm)}
+.email{font-family:var(--mono);font-size:14px;user-select:all;color:var(--text)}
+
+.index{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:min(980px,100%);margin:26px auto 0}
+.index h2{font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.index ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.index a{color:var(--accent);font-weight:600;font-size:15px}
+.index a:hover{color:var(--accent-warm)}
+@media (max-width:700px){.index{grid-template-columns:1fr;gap:18px}}
+
+.strip{position:relative;width:min(1120px,100%);margin:28px auto 0}
+.scroller{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(200px,26%);gap:14px;overflow-x:auto;scroll-snap-type:inline mandatory;
+  padding:0 42px 10px;scrollbar-color:var(--accent) transparent}
+.slide{scroll-snap-align:center;display:grid;gap:7px;min-width:0;color:var(--muted);font-weight:600;text-align:left}
+.slide .thumb{height:clamp(120px,12vw,160px);border:1px solid var(--line);border-radius:5px;box-shadow:var(--shadow)}
+.slide span{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide:hover{color:var(--accent)}
+.arrow{position:absolute;top:0;z-index:2;width:32px;height:clamp(120px,12vw,160px);border:0;border-radius:6px;cursor:pointer;
+  background:color-mix(in srgb,var(--surface-2) 85%,transparent);color:var(--text);font-size:30px;line-height:1}
+.arrow:hover{color:var(--accent)}
+.arrow.prev{left:0}.arrow.next{right:0}
+@media (max-width:980px){.scroller{grid-auto-columns:minmax(200px,46%)}}
+@media (max-width:560px){.scroller{grid-auto-columns:minmax(180px,74%);padding-inline:30px}.arrow{width:24px}}
+
+/* drawings */
+.thumb,.pmedia{background:var(--media);color:var(--media-ink);display:grid;place-items:center;padding:14px 18px}
+.thumb svg,.pmedia svg{width:100%;height:100%;max-height:100%}
+
+/* cards */
+main{width:min(1400px,100%);margin:0 auto;padding-block:34px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+.group-h{display:flex;align-items:baseline;gap:14px;padding-top:10px}
+.group-h h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);font-weight:700;white-space:nowrap}
+.group-h::after{content:"";flex:1;height:1px;background:var(--line)}
+.card{scroll-margin-top:20px;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1fr);gap:1px;border:1px solid var(--line);background:var(--line);overflow:hidden}
+.pmedia{min-height:360px;padding:28px 36px}
+.pbody{background:var(--surface);padding:clamp(22px,3.4vw,40px);display:flex;flex-direction:column;gap:16px;min-width:0}
+.kicker{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;color:var(--soft);font-size:14px;font-weight:700;font-family:var(--mono)}
+.tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px;font-family:var(--sans)}
+.tags span{border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:var(--surface-2);color:var(--muted);font-size:12.5px;font-weight:500}
+.card h3{font-size:clamp(24px,2.8vw,36px);font-weight:700}
+.sub{font-size:clamp(16px,1.7vw,19px);font-weight:600;line-height:1.4}
+.org{font-size:14.5px;color:var(--soft)}
+.metric{font-family:var(--mono);font-size:13px;color:var(--accent);border-left:2px solid var(--accent);padding-left:10px}
+.pts{display:grid;gap:10px;color:var(--muted);max-width:68ch}
+.cite,.note{font-size:14px;color:var(--soft)}
+.cite a{color:var(--accent)}
+.note{color:var(--accent-warm);font-weight:600}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:auto;padding-top:4px}
+.links a{display:inline-flex;align-items:center;min-height:36px;padding:6px 14px;border:1px solid var(--go-line);border-radius:4px;background:var(--go);color:#f4fff8;font-weight:700;font-size:14.5px}
+.links a:hover{background:var(--go-hi)}
+@media (max-width:980px){.card{grid-template-columns:1fr}.pmedia{min-height:260px;aspect-ratio:16/9;max-width:100%}}
+@media (max-width:560px){.kicker{flex-direction:column}.tags{justify-content:flex-start}}
+
+/* education + skills */
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;border:1px solid var(--line);background:var(--line);margin-top:8px}
+.facts > div{background:var(--surface);padding:clamp(20px,3vw,32px);display:grid;gap:14px;align-content:start;min-width:0}
+.facts h3{font-size:20px}
+.edu{display:grid;gap:4px}
+.edu b{font-size:16px}
+.edu span{color:var(--muted);font-size:15px}
+.edu .d{font-family:var(--mono);font-size:13px;color:var(--soft)}
+.sk{display:grid;gap:10px}
+.sk p{color:var(--muted);font-size:15px}
+.sk p b{color:var(--text);font-weight:600}
+@media (max-width:820px){.facts{grid-template-columns:1fr}}
+
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;border-top:1px solid var(--line);color:var(--soft);font-size:14px;
+  padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <button class="theme" id="theme" type="button" aria-label="Toggle light and dark mode">◐</button>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" id="lang-en" data-lang="en" aria-pressed="true">EN</button>
+    <button type="button" id="lang-zh" data-lang="zh" aria-pressed="false">中文</button>
+  </div>
+  <h1 data-i="title"></h1>
+  <p class="tagline" data-i="tagline"></p>
+  <p class="meta">
+    <span data-i="school"></span>
+    <span><span data-i="contact"></span> <span class="email" id="email">charleswcycy@gmail.com</span> <button class="copy" type="button" id="copy" data-i="copy"></button></span>
+    <a href="https://www.linkedin.com/in/wangcy928" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </p>
+  <nav class="index" id="index" aria-label="Project index"></nav>
+  <section class="strip" aria-label="Project images">
+    <button class="arrow prev" type="button" id="prev" aria-label="Previous">‹</button>
+    <div class="scroller" id="scroller" tabindex="0"></div>
+    <button class="arrow next" type="button" id="next" aria-label="Next">›</button>
+  </section>
+</header>
+
+<main id="main"></main>
+
+<footer><span>© 2026 Changyu Wang</span><span data-i="foot"></span></footer>
+
+<script>
+var A='var(--accent)', T='font-family="JetBrains Mono,monospace" font-size="10" fill="currentColor" stroke="none"';
+var SVG={
+stir:'<svg viewBox="0 0 320 160" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="160" cy="84" rx="110" ry="42" stroke-dasharray="5 5"/><circle cx="160" cy="84" r="28"/><circle cx="160" cy="84" r="20" opacity=".4"/><circle cx="270" cy="84" r="6" fill="'+A+'" stroke="none"/><path d="M262 58 q13 10 9 22" stroke="'+A+'"/><path d="M266 74 l4 6 l3 -7" stroke="'+A+'"/><text x="160" y="28" text-anchor="middle" '+T+'>elliptical stir path · 100 Hz loop</text><text x="160" y="88" text-anchor="middle" '+T+'>cup</text><text x="160" y="148" text-anchor="middle" '+T+'>z-sag 15–20 mm → &lt;2 mm</text></svg>',
+soft:'<svg viewBox="0 0 320 160" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="16" y1="50" x2="304" y2="50" stroke-width="2"/><line x1="16" y1="114" x2="304" y2="114" stroke-width="2"/><rect x="88" y="68" width="42" height="28" rx="13"/><rect x="136" y="56" width="46" height="52" rx="18" stroke="'+A+'" stroke-width="1.8"/><rect x="188" y="68" width="42" height="28" rx="13"/><path d="M159 18 v28 M153 40 l6 6 l6 -6" stroke="'+A+'"/><path d="M159 146 v-28 M153 124 l6 -6 l6 6" stroke="'+A+'"/><text x="172" y="28" '+T+'>B field</text><path d="M242 82 h42 M278 76 l6 6 l-6 6"/><text x="16" y="148" '+T+'>peristaltic motion</text></svg>',
+ut:'<svg viewBox="0 0 320 160" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="116" cy="128" rx="66" ry="12"/><path d="M94 122 C90 96 82 84 96 66 C106 54 102 40 108 30 h16 C130 40 126 54 136 66 C150 84 142 96 138 122 Z"/><path d="M82 142 a38 7 0 0 0 70 0" stroke="'+A+'"/><path d="M280 140 v-52 l-42 -26 l-60 22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="280" cy="88" r="5" fill="#20272D"/><circle cx="238" cy="62" r="5" fill="#20272D"/><rect x="160" y="78" width="18" height="11" fill="'+A+'" stroke="none"/><line x1="262" y1="140" x2="300" y2="140" stroke-width="2"/><text x="190" y="110" '+T+'>UT probe</text><text x="16" y="16" '+T+'>robot + turntable scan</text></svg>',
+bus:'<svg viewBox="0 0 320 160" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="12" y="40" width="84" height="72" rx="4"/><text x="20" y="58" '+T+'>STOP 14885</text><text x="20" y="84" font-family="JetBrains Mono,monospace" font-size="17" fill="currentColor" stroke="none">12 min</text><text x="20" y="102" '+T+'>next bus</text><path d="M100 76 h16 M110 70 l6 6 l-6 6"/><rect x="122" y="46" width="70" height="60" rx="4" stroke="'+A+'" stroke-width="1.8"/><text x="157" y="74" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="'+A+'" stroke="none">Long</text><text x="157" y="88" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="'+A+'" stroke="none">wait?</text><path d="M195 76 h14 M203 70 l6 6 l-6 6"/><rect x="214" y="28" width="100" height="98" rx="4"/><text x="221" y="46" '+T+'>FITS YOUR WAIT</text><text x="221" y="70" '+T+'>café · 3 min</text><text x="221" y="90" '+T+'>mural · 4 min</text><text x="221" y="110" '+T+'>shop · 5 min</text><text x="12" y="150" '+T+'>wait time → places you can reach</text></svg>',
+port:'<svg viewBox="0 0 320 160" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="10" y="30" width="52" height="20" rx="3"/><rect x="10" y="60" width="52" height="20" rx="3"/><rect x="10" y="90" width="52" height="20" rx="3"/><text x="36" y="44" text-anchor="middle" '+T+'>src A</text><text x="36" y="74" text-anchor="middle" '+T+'>src B</text><text x="36" y="104" text-anchor="middle" '+T+'>src C</text><path d="M62 40 L82 70 M62 70 H82 M62 100 L82 70"/><rect x="82" y="58" width="52" height="24" rx="3"/><text x="108" y="74" text-anchor="middle" '+T+'>crawl</text><path d="M134 70 h10"/><rect x="144" y="58" width="52" height="24" rx="3"/><text x="170" y="74" text-anchor="middle" '+T+'>screen</text><path d="M196 70 h10"/><rect x="206" y="58" width="52" height="24" rx="3" stroke="'+A+'" stroke-width="1.8"/><text x="232" y="74" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="'+A+'" stroke="none">match</text><path d="M232 82 v16"/><rect x="206" y="98" width="52" height="24" rx="3"/><text x="232" y="114" text-anchor="middle" '+T+'>QC</text><path d="M258 110 h14 M268 106 l4 4 l-4 4"/><path d="M276 96 h30 v28 h-30 z"/><path d="M276 103 h30 M276 110 h30 M276 117 h30" opacity=".4"/><text x="10" y="150" '+T+'>method only · data confidential</text></svg>',
+sic:'<svg viewBox="0 0 320 160" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="78" cy="80" r="50"/><path d="M40 60 h76 M34 80 h88 M40 100 h76 M58 36 v88 M78 30 v100 M98 36 v88" opacity=".35"/><path d="M68 128 h20" stroke-width="3"/><text x="78" y="148" text-anchor="middle" '+T+'>6" / 8" wafer</text><path d="M140 80 h22 M156 74 l6 6 l-6 6"/><path d="M180 124 V36 M180 124 H306" /><path d="M186 112 L220 104 L250 84 L276 60 L300 46" stroke="'+A+'" stroke-width="1.8"/><text x="186" y="30" '+T+'>yield / capacity ramp</text><text x="240" y="140" '+T+'>time →</text></svg>'
+};
+var CAT={robo:['Robotics & hardware','#0E7490'],ai:['AI-built','#1D4ED8'],biz:['Tech × business','#7C3AED']};
+
+var I={
+ en:{title:'Changyu Wang · Personal Projects',tagline:'Robotics · Mechatronics · Mechanical Design · Tech × Business',school:'M.S.E. Mechanical Engineering, UPenn · graduating May 2027',contact:'Contact:',copy:'Copy',copied:'Copied',foot:'Open to full-time roles in the US and China.',
+   g:{robo:'Robotics & Hardware',ai:'AI-Built Prototypes',biz:'Tech × Business'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗'},
+ zh:{title:'王长宇 · 个人作品集',tagline:'机器人 · 机电一体化 · 机械设计 · 技术 × 商业',school:'宾夕法尼亚大学 机械工程与应用力学硕士 · 2027 年 5 月毕业',contact:'联系：',copy:'复制',copied:'已复制',foot:'正在寻找中美两地的全职机会。',
+   g:{robo:'机器人与硬件',ai:'AI 辅助开发原型',biz:'技术 × 商业'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗'}
+};
+var P=[
+{id:'stir',g:'robo',year:'2026',tags:['Franka Panda','Jacobian control','ROS / RViz','Python'],
+ t:{en:'Robot Arm Stirring Module',zh:'机械臂搅拌模块'},
+ s:{en:'The controller that let a 7-DOF Franka arm stir drinks live at a public GRASP Lab demo.',zh:'让 7 自由度 Franka 机械臂在 GRASP 实验室公开演示中现场搅拌饮品的控制器。'},
+ o:{en:'GRASP Lab, UPenn · Jan–May 2026 · Controls lead',zh:'宾大 GRASP 实验室 · 2026 年 1–5 月 · 控制负责人'},
+ m:'z-sag 15–20 mm → <2 mm · σ < 1.5 mm · 0 spills',
+ b:{en:['A 100 Hz closed-loop Cartesian controller: forward kinematics, pose-error feedback, and a Jacobian pseudo-inverse velocity solve that tracks an elliptical stir path with orientation locked.','Null-space projection re-centers the joints, so the arm does not drift over repeated cycles.','Z-axis integral compensation cut end-effector sag under a 200 g payload from 15–20 mm to under 2 mm. Velocity limits and a low-pass filter removed the resonance of the earlier playback approach.','Result: zero spills and σ < 1.5 mm hand-off repeatability across the full demo day.'],
+    zh:['100 Hz 闭环笛卡尔空间控制器：正运动学 + 位姿误差反馈 + 雅可比伪逆速度求解，在锁定姿态的前提下跟踪椭圆搅拌轨迹。','零空间投影让关节回到中位，多次循环不漂移。','Z 轴积分补偿把 200 g 负载下的末端下沉量从 15–20 mm 压到 2 mm 以内；速度限幅加低通滤波消除了原先离线回放方案的机械共振。','结果：公开演示日全天零洒漏，交接重复性 σ < 1.5 mm。']}},
+{id:'soft',g:'robo',year:'2023–24',tags:['Soft robotics','Smart materials','COMSOL','Team lead'],
+ t:{en:'Magnetic Soft Robot for Pipe Inspection',zh:'磁控管道检测软体机器人'},
+ s:{en:'Led a 5-person team building a soft robot that an electromagnetic field drives through pipe.',zh:'带领 5 人团队研制由电磁场驱动、可在管道内蠕动前进的软体机器人。'},
+ o:{en:'NCUT & BJTU Joint Lab · Mar 2023 – Jun 2024 · Project leader, National Undergraduate Innovation Program',zh:'北方工业大学 × 北京交通大学联合实验室 · 2023.03–2024.06 · 国家级大创项目负责人'},
+ m:'PRC utility patent ZL 2023 2 1674507.6',
+ b:{en:['Set the technical route and split the work across the team.','Formulated magnetorheological-fluid and magnetic-sponge composites, and built the compliant body that deforms under the field.','Measured deformation and locomotion with camera tracking, and compared reinforcement designs in COMSOL FEA before going back to the bench.'],
+    zh:['确定技术路线并组织团队分工。','配制磁流变液与磁性海绵复合材料，搭建在磁场下产生形变的柔性执行结构。','用相机追踪法测量形变与运动轨迹，并先用 COMSOL 有限元仿真比较加固方案，再回到实验台验证。']},
+ cite:'Patent: Tang F., Zhang H., <b>Wang C.</b>, et al. <i>A Peristaltic Pipeline Soft Robot Based on Electromagnetic Control.</i>'},
+{id:'ut',g:'robo',year:'2023–24',tags:['NDT','ANSYS','Mechanical design','Commissioning'],
+ t:{en:'Robotic Ultrasonic Inspection Platform',zh:'机器人超声检测平台'},
+ s:{en:'Designed and validated a robot-plus-turntable rig for ultrasonic testing of curved metal parts.',zh:'设计并验证用于曲面金属件超声检测的“机械臂 + 转台”平台。'},
+ o:{en:'NCUT, Beijing · Apr 2023 – Jun 2024 · Platform structure, rotary table, validation',zh:'北方工业大学 · 2023.04–2024.06 · 负责平台结构、转台与实验验证'},
+ m:'IOP conference paper, 2024',
+ b:{en:['Co-designed the platform structure, then installed and commissioned the rotary table.','Static FEA in ANSYS on stress, deformation and stiffness confirmed load capacity and shaped the test plan.','Ran coordinated robot and turntable experiments to validate the full inspection workflow.'],
+    zh:['参与平台结构设计，完成转台的安装与调试。','用 ANSYS 做应力、变形、刚度静力学分析，确认承载能力并据此制定测试方案。','开展机械臂与转台协同实验，验证完整检测流程。']},
+ cite:'Wang J., Zhang H., Xu H., <b>Wang C.</b>, et al. J. Phys.: Conf. Ser. (IOP), 2024.',
+ links:[{k:'doi',u:'https://doi.org/10.1088/1742-6596/2679/1/012006'}]},
+{id:'bus',g:'ai',year:'2026',tags:['UX design','AI-assisted coding','Transit data','Vercel'],
+ t:{en:'From Here: A Smarter Bus Stop Screen',zh:'From Here：更聪明的公交站屏幕'},
+ s:{en:'A bus stop screen that turns a long wait into nearby places you can actually reach in time.',zh:'把漫长候车变成“这段时间能去哪”的公交站屏幕。'},
+ o:{en:'LLMs for UX Prototyping, UPenn · Fall 2026 · Solo: concept, UX, build, deploy',zh:'宾大 LLMs for UX Prototyping 课程 · 2026 秋 · 独立完成概念、交互、开发与部署'},
+ m:'Live prototype · built with AI coding tools',
+ b:{en:['Designed around one rider question: what can I do with this wait? The screen shows live arrivals, then suggests food, sights and shops that fit the time left.','Rules decide what is reachable in time; the language model only phrases and ranks the candidates the rules allow.','Built for a shared public screen: big touch targets and a layout you can read at a glance.'],
+    zh:['围绕乘客的一个问题来设计：这段等车时间能做什么？屏幕先显示实时到站，再推荐时间够得着的餐饮、景点和商店。','“能不能及时走到”由确定性规则判断；大模型只在规则筛出的候选里负责表述和排序。','面向公共共享屏幕：大触控区域，一眼可读的信息层级。']},
+ links:[{k:'demo',u:'https://week3-bay-gamma.vercel.app/'}]},
+{id:'port',g:'ai',year:'2026',tags:['Python','Web crawling','Entity matching','Data QA'],
+ t:{en:'Yangtze Port Data Pipeline',zh:'长江港口数据管线'},
+ s:{en:'A crawl-and-match pipeline that turned scattered public sources into one verified port dataset.',zh:'把分散的公开数据源整理成一份经过核验的港口数据集。'},
+ o:{en:'China Waterborne Transport Research Institute · Jul–Aug 2026 · Research intern',zh:'交通运输部水运科学研究院 · 2026 年 7–8 月 · 研究实习生'},
+ m:'75 candidate ports · 1,828 berth records verified',
+ b:{en:['The team needed a trustworthy list of Yangtze ports and berths as the base for a berthing and vessel-scheduling agent.','Built and iterated the Python crawlers with AI coding tools, collecting records from several public sources.','Wrote the screening rules, the cross-source matching (one berth, many names) and the quality checks, then verified conflicts by hand.'],
+    zh:['团队需要一份可信的长江港口与泊位清单，作为靠泊与船舶调度智能体的基础数据。','借助 AI 编程工具编写并迭代 Python 爬虫，从多个公开来源采集记录。','制定筛选规则、跨源实体匹配（同一泊位多种名称）与质量核查，矛盾记录人工复核。']},
+ note:{en:'Method only. The project data is confidential.',zh:'仅展示方法，项目数据保密。'}},
+{id:'sic',g:'biz',year:'2026',tags:['Due diligence','Valuation','Semiconductors'],
+ t:{en:'SiC Chipmaker Investment Case',zh:'碳化硅芯片企业投资案例'},
+ s:{en:'Used an engineering lens to judge a silicon-carbide power-chip maker for a financing deal.',zh:'用工程视角评估一家碳化硅功率半导体企业的融资项目。'},
+ o:{en:'Northeast Securities, Investment Banking · May–Jul 2026 · Asst. investment manager intern',zh:'东北证券 投资银行部 · 2026 年 5–7 月 · 投资经理助理实习生'},
+ m:'29-page business plan · P/B comparables',
+ b:{en:['Wrote the company research report and review materials for a SiC power-semiconductor IDM, and co-produced its 29-page financing business plan.','Valued the target with P/B comparables across four listed peers, and assessed deal structure, risk controls and exit options.','Read the device roadmap, fab process and 6"/8" line yield and capacity ramp, then turned them into calls on commercialization timing, cost and risk.'],
+    zh:['为一家 SiC 功率半导体 IDM 撰写公司研究报告与评审材料，参与编写 29 页融资商业计划书。','选取四家上市可比公司做 P/B 估值，评估交易结构、风控措施与退出路径。','解读器件路线、晶圆工艺以及 6/8 英寸产线良率与产能爬坡，转化为对商业化节奏、成本和风险的判断。']}}
+];
+var EDU={
+ en:[['University of Pennsylvania','M.S.E. Mechanical Engineering & Applied Mechanics · Robotics','2025 – 2027'],['Brunel University London & North China University of Technology','Dual B.Eng. Mechanical Engineering · First-Class Honours · Outstanding Graduate','2021 – 2025']],
+ zh:[['宾夕法尼亚大学','机械工程与应用力学硕士 · 机器人方向','2025 – 2027'],['伦敦布鲁内尔大学 × 北方工业大学','机械工程双学士 · 一等荣誉学位 · 优秀毕业生','2021 – 2025']]};
+var SK={
+ en:[['CAD & simulation','SolidWorks, Fusion 360, Onshape, Rhino, ANSYS, COMSOL, ADAMS'],['Code & robotics','Python, MATLAB, C++, ROS / RViz, Unreal Engine 4, AI-assisted coding'],['Business','Company research, comparables valuation, business plans'],['Languages','Mandarin (native), English (fluent)']],
+ zh:[['CAD 与仿真','SolidWorks、Fusion 360、Onshape、Rhino、ANSYS、COMSOL、ADAMS'],['编程与机器人','Python、MATLAB、C++、ROS / RViz、Unreal Engine 4、AI 辅助编程'],['商业分析','公司研究、可比估值、商业计划书'],['语言','中文（母语）、英语（流利）']]};
+
+var lang='en';
+try{ if(localStorage.getItem('cw-lang')==='zh') lang='zh'; }catch(e){}
+try{ var th=localStorage.getItem('cw-theme'); if(th) document.documentElement.dataset.theme=th; }catch(e){}
+function x(f){return typeof f==='string'?f:(f[lang]||f.en)}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+var GROUPS=['robo','ai','biz'];
+
+function render(){
+  var L=I[lang];
+  document.documentElement.lang=lang==='zh'?'zh-CN':'en';
+  document.querySelectorAll('[data-i]').forEach(function(el){el.textContent=L[el.dataset.i]});
+  document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.lang===lang)});
+  document.getElementById('index').innerHTML=GROUPS.map(function(g){
+    return '<div><h2>'+L.g[g]+'</h2><ul>'+P.filter(function(p){return p.g===g}).map(function(p){return '<li><a href="#'+p.id+'">'+x(p.t)+'</a></li>'}).join('')+'</ul></div>'}).join('');
+  document.getElementById('scroller').innerHTML=P.map(function(p){
+    return '<a class="slide" href="#'+p.id+'"><div class="thumb" aria-hidden="true">'+SVG[p.id]+'</div><span>'+x(p.t)+'</span></a>'}).join('');
+  var html='';
+  GROUPS.forEach(function(g){
+    html+='<div class="group-h"><h2>'+L.g[g]+'</h2></div>';
+    P.filter(function(p){return p.g===g}).forEach(function(p){
+      html+='<article class="card" id="'+p.id+'"><div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div><div class="pbody">'+
+        '<div class="kicker"><span>'+p.year+'</span><div class="tags">'+p.tags.map(function(t){return '<span>'+t+'</span>'}).join('')+'</div></div>'+
+        '<h3>'+x(p.t)+'</h3><p class="sub">'+x(p.s)+'</p><p class="org">'+x(p.o)+'</p><p class="metric">'+esc(p.m)+'</p>'+
+        '<div class="pts">'+x(p.b).map(function(t){return '<p>'+esc(t)+'</p>'}).join('')+'</div>'+
+        (p.cite?'<p class="cite">'+p.cite+'</p>':'')+(p.note?'<p class="note">'+x(p.note)+'</p>':'')+
+        (p.links?'<div class="links">'+p.links.map(function(l){return '<a href="'+l.u+'" target="_blank" rel="noopener">'+L[l.k]+'</a>'}).join('')+'</div>':'')+
+        '</div></article>';
+    });
+  });
+  html+='<div class="group-h"><h2>'+L.edu+' · '+L.skills+'</h2></div><div class="facts"><div><h3>'+L.edu+'</h3>'+
+    EDU[lang].map(function(e){return '<div class="edu"><b>'+e[0]+'</b><span>'+e[1]+'</span><span class="d">'+e[2]+'</span></div>'}).join('')+
+    '</div><div><h3>'+L.skills+'</h3><div class="sk">'+SK[lang].map(function(s){return '<p><b>'+s[0]+'：</b>'.replace('：',lang==='zh'?'：':': ')+s[1]+'</p>'}).join('')+'</div></div></div>';
+  document.getElementById('main').innerHTML=html;
+}
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){lang=b.dataset.lang;try{localStorage.setItem('cw-lang',lang)}catch(e){}render()})});
+document.getElementById('theme').addEventListener('click',function(){
+  var r=document.documentElement,cur=r.dataset.theme||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+  r.dataset.theme=cur==='light'?'dark':'light';try{localStorage.setItem('cw-theme',r.dataset.theme)}catch(e){}
+});
+var sc=document.getElementById('scroller');
+document.getElementById('prev').addEventListener('click',function(){sc.scrollBy({left:-sc.clientWidth*.6,behavior:'smooth'})});
+document.getElementById('next').addEventListener('click',function(){sc.scrollBy({left:sc.clientWidth*.6,behavior:'smooth'})});
+document.getElementById('copy').addEventListener('click',function(){
+  var b=this,done=function(){b.textContent=I[lang].copied;setTimeout(function(){b.textContent=I[lang].copy},1500)};
+  try{navigator.clipboard.writeText('charleswcycy@gmail.com').then(done,function(){selectEmail()})}catch(e){selectEmail()}
+});
+function selectEmail(){var r=document.createRange();r.selectNodeContents(document.getElementById('email'));var s=getSelection();s.removeAllRanges();s.addRange(r)}
+render();
+</script>
+
+</body>
+</html>
