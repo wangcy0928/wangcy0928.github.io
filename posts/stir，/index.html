@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Robot Arm Stirring Module | Changyu Wang</title>
+<meta name="description" content="Upright-cup mixing on a 7-DOF Franka Panda: differential IK with null-space control, from the MEAM 5200 course demo to an open simulation rebuild.">
+<script>
+try{var t=localStorage.getItem('cw-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+try{if(localStorage.getItem('cw-lang')==='zh')document.documentElement.lang='zh-CN'}catch(e){}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#101312; --top:#1a1d1c; --surface:#171a19; --surface-2:#212524;
+  --text:#ecefed; --muted:#b4bdb9; --soft:#828c88; --line:#2f3533;
+  --accent:#2aa3dc; --accent-warm:#f0906a; --go:#17864f; --go-line:#2fbf74; --go-hi:#20a863;
+  --good:#3fcf8e;
+  --sans:"IBM Plex Sans","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c; --good:#13804f;
+}}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c; --good:#13804f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;padding-top:env(safe-area-inset-top,0px);background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16.5px;line-height:1.65}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-warm)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3,p{margin:0;overflow-wrap:anywhere}
+h1,h2,h3{line-height:1.15;text-wrap:balance}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:1px 6px;border-radius:4px}
+
+html[lang="en"] [data-l="zh"],html[lang="zh-CN"] [data-l="en"]{display:none!important}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:11;background:var(--bg)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text);font-weight:700}
+.brand b{display:grid;place-items:center;width:34px;height:34px;background:var(--text);color:var(--bg);font-size:14px}
+.acts{display:flex;align-items:center;gap:10px}
+.lang{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden}
+.lang button{min-width:46px;height:32px;border:0;background:transparent;color:var(--accent);cursor:pointer;font:700 14px var(--sans)}
+.lang button+button{border-left:1px solid var(--accent)}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.theme{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;font-size:16px}
+
+article{width:min(980px,100%);margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+.back{font-weight:700;font-size:15px}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+h1{font-size:clamp(30px,4.4vw,48px);font-weight:700;letter-spacing:-.01em}
+.lede{font-size:clamp(17px,1.9vw,20px);color:var(--muted);max-width:66ch}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btns a{display:inline-flex;align-items:center;min-height:40px;padding:8px 16px;border:1px solid var(--go-line);border-radius:4px;background:var(--go);color:#f4fff8;font-weight:700;font-size:15px}
+.btns a:hover{background:var(--go-hi);color:#fff}
+.btns a.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btns a.ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+h2{font-size:clamp(23px,2.6vw,30px);margin-top:26px}
+h3{font-size:19px;margin-top:6px}
+.prose{display:grid;gap:12px;color:var(--muted);max-width:70ch}
+.prose b{color:var(--text);font-weight:600}
+ul.prose{margin:0;padding-left:1.2em}
+ul.prose li::marker{color:var(--accent)}
+
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.facts div{background:var(--surface);padding:14px 16px;display:grid;gap:2px;min-width:0}
+.facts span{font-size:12.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+.facts b{font-size:15px;font-weight:600}
+@media (max-width:720px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+figure{margin:0;border:1px solid var(--line);background:var(--surface)}
+figure img,figure video{display:block;width:100%;height:auto}
+figure.plot img,figure.plot video{background:#fff}
+figure.demo{background:#0c0e0d}
+figure.demo video{max-height:min(78vh,720px);width:auto;max-width:100%;margin:0 auto}
+figcaption{padding:10px 14px;color:var(--soft);font-size:14px}
+.viewer{border:1px solid var(--line);background:var(--surface)}
+.viewer iframe{display:block;width:100%;height:900px;border:0;background:var(--surface)}
+.viewer .vnote{padding:10px 14px;color:var(--soft);font-size:14px;border-top:1px solid var(--line)}
+.placeholder{display:grid;place-items:center;min-height:220px;padding:24px;text-align:center;color:var(--soft);border:1px dashed var(--line);background:var(--surface);font-size:15px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:600;background:var(--surface-2)}
+td{color:var(--muted);background:var(--surface)}
+td.n{font-family:var(--mono);font-size:14px;text-align:right}
+th.n{text-align:right}
+tr.best td{color:var(--text);font-weight:600}
+tr.best td.n{color:var(--good)}
+tr:last-child td{border-bottom:0}
+.small{font-size:14px;color:var(--soft)}
+
+pre.flow{margin:0;overflow-x:auto;padding:18px 20px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:14px/1.55 var(--mono)}
+
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;border-top:1px solid var(--line);color:var(--soft);font-size:14px;
+  padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+</style>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="../../"><b>CW</b>Changyu Wang</a>
+  <div class="acts">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-en" data-lang="en">EN</button>
+      <button type="button" id="lang-zh" data-lang="zh">中文</button>
+    </div>
+    <button class="theme" type="button" id="theme" aria-label="Toggle light and dark mode">◐</button>
+  </div>
+</header>
+
+<article>
+  <a class="back" href="../../#stir"><span data-l="en">← All projects</span><span data-l="zh">← 全部项目</span></a>
+  <p class="eyebrow">2026 · MEAM 5200 · University of Pennsylvania</p>
+  <h1><span data-l="en">Upright-Cup Mixing on a 7-DOF Panda</span><span data-l="zh">7 自由度 Panda 机械臂端杯搅拌</span></h1>
+  <p class="lede" data-l="en">A Franka Panda holds a cup and moves it along a horizontal ellipse while keeping it upright, so the ingredients mix without spilling. I led the controls for this stirring module in the course project, which ran live on real Panda arms at Penn's GRASP Lab. I then rebuilt the controller from scratch as an open simulation to find out exactly why each design choice mattered.</p>
+  <p class="lede" data-l="zh">Franka Panda 机械臂端着杯子沿水平椭圆运动，同时保持杯身竖直，让食材混合而不洒出。课程项目中我负责这个搅拌模块的控制，最终在宾大 GRASP 实验室的真实 Panda 机械臂上现场演示。之后我从零把控制器重写成一个开源仿真，弄清每个设计选择到底为什么有效。</p>
+  <div class="btns">
+    <a href="https://github.com/wangcy0928/panda-cup-mixing" target="_blank" rel="noopener">GitHub ↗</a>
+    <a class="ghost" href="https://wangcy0928.github.io/panda-cup-mixing/" target="_blank" rel="noopener"><span data-l="en">Full-screen 3D replay ↗</span><span data-l="zh">全屏 3D 回放 ↗</span></a>
+  </div>
+
+  <div class="facts">
+    <div><span data-l="en">Role</span><span data-l="zh">角色</span><b data-l="en">Controls lead, stirring module</b><b data-l="zh">搅拌模块控制负责人</b></div>
+    <div><span data-l="en">Robot</span><span data-l="zh">机器人</span><b>Franka Panda, 7-DOF</b></div>
+    <div><span data-l="en">Control loop</span><span data-l="zh">控制频率</span><b>100 Hz</b></div>
+    <div><span data-l="en">Stack</span><span data-l="zh">技术栈</span><b>Python · NumPy · ROS / RViz</b></div>
+  </div>
+
+  <h2><span data-l="en">On the real robot</span><span data-l="zh">真机演示</span></h2>
+  <ul class="prose">
+    <li data-l="en">A 100 Hz Cartesian controller using Jacobian pseudo-inverse velocity mapping and null-space joint centering, following an elliptical stir path with the tool orientation held fixed.</li>
+    <li data-l="zh">100 Hz 笛卡尔空间控制器：雅可比伪逆速度映射 + 零空间关节回中，在保持工具姿态不变的前提下跟踪椭圆搅拌轨迹。</li>
+    <li data-l="en">Under a 200 g load the cup sagged 15–20 mm. Integral compensation brought that under 2 mm; velocity limits and a low-pass filter removed the vibration of the earlier replay approach.</li>
+    <li data-l="zh">200 g 负载下杯子下沉 15–20 mm，积分补偿把它压到 2 mm 以内；速度限幅和低通滤波消除了之前离线回放方案的振动。</li>
+    <li data-l="en">Trajectory commands and live visualization in ROS/RViz. Demo day finished with no spills.</li>
+    <li data-l="zh">用 ROS/RViz 实现轨迹指令和实时可视化。演示日全程零洒漏。</li>
+  </ul>
+  <figure class="demo"><video src="demo.mp4" poster="demo-poster.jpg" controls autoplay muted loop playsinline aria-label="Franka Panda stirring a cup on demo day"></video>
+    <figcaption><span data-l="en">Demo day at Penn's GRASP Lab: the Panda moves the cup along the ellipse with the cup held upright.</span><span data-l="zh">宾大 GRASP 实验室演示日：Panda 端着杯子沿椭圆运动，杯身始终保持竖直。</span></figcaption></figure>
+
+  <h2><span data-l="en">Interactive 3D replay: course controller vs. rebuild</span><span data-l="zh">可交互 3D 回放：课程版控制器 vs 重写版</span></h2>
+  <p class="prose" data-l="en">The course controller (v3) and my rebuild (v4) run side by side on the same simulated arm and load. Drag to rotate, scroll to zoom.</p>
+  <p class="prose" data-l="zh">课程版控制器（v3）和我的重写版（v4）在同一个仿真机械臂、同样负载下并排运行。拖动旋转视角，滚轮缩放。</p>
+  <div class="viewer">
+    <iframe id="mixing-viewer" src="https://wangcy0928.github.io/panda-cup-mixing/?embed" title="Interactive 3D replay of the mixing controllers" loading="lazy"></iframe>
+    <p class="vnote" data-l="en">Replay of the Python simulation (simplified plant, not Gazebo or the real robot). Needs an internet connection to load.</p>
+    <p class="vnote" data-l="zh">回放来自 Python 仿真（简化模型，不是 Gazebo，也不是真机），需要联网加载。</p>
+  </div>
+
+  <h2><span data-l="en">How the controller works</span><span data-l="zh">控制器原理</span></h2>
+  <p class="prose" data-l="en">Every 10 ms the controller reads the joint angles, works out the joint velocities that move the cup toward its planned position, and sends a new position command.</p>
+  <p class="prose" data-l="zh">每 10 ms，控制器读取关节角，算出让杯子朝规划位置运动的关节速度，再发出新的位置指令。</p>
+<figure class="plot"><video src="mixing.mp4" poster="mixing-poster.jpg" autoplay muted loop playsinline aria-label="Simulated arm and top view of the cup path"></video>
+    <figcaption><span data-l="en">Simulation of the rebuilt controller (v4): the arm in 3D and the cup's path from above.</span><span data-l="zh">重写版控制器（v4）仿真：左为机械臂三维运动，右为杯子轨迹俯视图。</span></figcaption></figure>
+<pre class="flow">ellipse: x_des(t), v_des(t)
+q (measured) ─► FK ─► x, R
+
+v  = v_des + K (x_des − x)          task-space feedback
+ω  = k_r · e_R(R_home, R)           keep the cup upright
+
+dq = J⁺ [v; ω] + (I − J⁺J) · k_n (q_home − q)
+     damped least squares   null space: stop joint drift
+
+scale dq to the joint velocity limits
+q_cmd ← q_cmd + dt · dq  ─►  robot  ─►  next tick</pre>
+
+  <h2><span data-l="en">Results (simulation)</span><span data-l="zh">结果（仿真）</span></h2>
+  <div class="tbl">
+    <table>
+      <thead><tr>
+        <th><span data-l="en">Controller</span><span data-l="zh">控制器</span></th>
+        <th class="n"><span data-l="en">xy RMS error</span><span data-l="zh">水平跟踪误差</span></th>
+        <th class="n"><span data-l="en">Mean sag (z)</span><span data-l="zh">平均下沉</span></th>
+        <th class="n"><span data-l="en">Peak horiz. accel</span><span data-l="zh">峰值水平加速度</span></th>
+      </tr></thead>
+      <tbody>
+        <tr><td><span data-l="en">v1: P-only, integrate from measured q</span><span data-l="zh">v1：纯比例控制，从实测关节角积分</span></td><td class="n">12.3 mm</td><td class="n">16.2 mm</td><td class="n">2.6 m/s²</td></tr>
+        <tr><td><span data-l="en">v3: course final controller</span><span data-l="zh">v3：课程最终版</span></td><td class="n">13.7 mm</td><td class="n">0.8 mm</td><td class="n">2.7 m/s²</td></tr>
+        <tr class="best"><td><span data-l="en">v4: rebuild</span><span data-l="zh">v4：重写版</span></td><td class="n">0.7 mm</td><td class="n">0.15 mm</td><td class="n">0.85 m/s²</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small" data-l="en">Same simulated plant and load for every run. Peak horizontal acceleration is the proxy for spill risk.</p>
+  <p class="small" data-l="zh">所有运行使用同一仿真模型和负载。峰值水平加速度用来近似衡量洒出风险。</p>
+
+  <h2><span data-l="en">What I learned</span><span data-l="zh">关键发现</span></h2>
+  <h3><span data-l="en">1. Integrate from the command, not the measurement</span><span data-l="zh">1. 从上一次指令积分，而不是从实测值积分</span></h3>
+  <p class="prose" data-l="en">Restarting the command from the measured pose every tick leaves the joint controller almost no position error to push against, so the load makes the arm sag. That is why the course version needed a large z-gain and an extra integrator. Integrating from the previous command lets the correction build up in the command itself, which removes the sag with plain P gains.</p>
+  <p class="prose" data-l="zh">每个周期都从实测位姿重新起算指令，关节控制器几乎没有位置误差可以"用力"，负载就会把机械臂压下去。这正是课程版需要很大的 z 增益和额外积分器的原因。改成从上一次指令积分后，修正量会累积在指令本身，只用比例增益就消除了下沉。</p>
+  <figure class="plot"><img src="2_integrate_from_command.png" alt="z and xy error over 20 s: integrating from the measured pose versus from the previous command" loading="lazy">
+    <figcaption><span data-l="en">Same gains; only the integration start point differs.</span><span data-l="zh">增益相同，只改变积分起点。</span></figcaption></figure>
+
+  <h3><span data-l="en">2. Null space stops joint drift</span><span data-l="zh">2. 零空间控制阻止关节漂移</span></h3>
+  <p class="prose" data-l="en">With 7 joints for a 6-D task, joints 1 and 7 can counter-rotate without moving the cup, and the pseudo-inverse lets them wander about 1.5 rad in 20 s. Pulling every joint back toward the start pose in the null space removes the drift without disturbing the cup.</p>
+  <p class="prose" data-l="zh">7 个关节完成 6 维任务，关节 1 和关节 7 可以反向转动而不影响杯子，伪逆解会让它们在 20 秒内漂移约 1.5 rad。在零空间里把所有关节拉回初始姿态，就能消除漂移，又不干扰杯子运动。</p>
+  <figure class="plot"><img src="3_null_space_drift.png" alt="Joint 1 drift with and without null-space centering" loading="lazy"></figure>
+
+  <h3><span data-l="en">3. Gains and filtering</span><span data-l="zh">3. 增益与滤波</span></h3>
+  <p class="prose" data-l="en">The course controller used low task gains and a low-pass filter that adds about 19 ms of lag. Reverting either one in the rebuild roughly triples the xy error. The arm stays far from a singularity on this path, so that was not the cause.</p>
+  <p class="prose" data-l="zh">课程版用了较低的任务空间增益，以及一个带来约 19 ms 延迟的低通滤波器。在重写版里单独恢复其中任意一项，水平误差都会增加约三倍。这条轨迹离奇异位形很远，所以问题不在奇异性。</p>
+
+  <h2><span data-l="en">Limitations</span><span data-l="zh">局限</span></h2>
+  <ul class="prose">
+    <li data-l="en">The v4 rebuild has only run in simulation. A ROS port to the course interface exists but has not been tested on hardware.</li>
+    <li data-l="zh">v4 重写版只在仿真中运行过。已经移植到课程 ROS 接口，但还没上真机测试。</li>
+    <li data-l="en">The robot model is simplified (no full dynamics). It is calibrated only so that v1 sags 15–20 mm, as seen on the real robot, so trends are more reliable than exact numbers.</li>
+    <li data-l="zh">机器人模型是简化的（没有完整动力学），只按真机上观察到的 v1 下沉 15–20 mm 做了标定，因此趋势比具体数值更可信。</li>
+  </ul>
+</article>
+
+<footer><span>© 2026 Changyu Wang</span><a href="../../">wangcy0928.github.io</a></footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  function setLang(l){root.lang=l==='zh'?'zh-CN':'en';try{localStorage.setItem('cw-lang',l)}catch(e){}
+    document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===l))})}
+  setLang(root.lang==='zh-CN'?'zh':'en');
+  document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.dataset.lang)})});
+  document.getElementById('theme').addEventListener('click',function(){
+    var cur=root.dataset.theme||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    root.dataset.theme=cur==='light'?'dark':'light';try{localStorage.setItem('cw-theme',root.dataset.theme)}catch(e){}
+  });
+  addEventListener('message',function(e){
+    if(e.origin!=='https://wangcy0928.github.io')return;
+    if(e.data&&e.data.type==='mixing-viewer-height')document.getElementById('mixing-viewer').style.height=e.data.height+'px';
+  });
+})();
+</script>
+</body>
+</html>
