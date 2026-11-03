@@ -90,6 +90,9 @@ h1,h2,h3{line-height:1.12;text-wrap:balance}
 /* drawings */
 .thumb,.pmedia{background:var(--media);color:var(--media-ink);display:grid;place-items:center;padding:14px 18px}
 .thumb svg,.pmedia svg{width:100%;height:100%;max-height:100%}
+.thumb.photo,.pmedia.photo{padding:0;background:#fff;overflow:hidden}
+.thumb.photo img{width:100%;height:100%;object-fit:cover}
+.pmedia.photo video{width:100%;height:100%;object-fit:contain;display:block}
 
 /* cards */
 main{width:min(1400px,100%);margin:0 auto;padding-block:34px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
@@ -174,18 +177,19 @@ var CAT={robo:['Robotics & hardware','#0E7490'],ai:['AI-built','#1D4ED8'],biz:['
 
 var I={
  en:{title:'Changyu Wang · Personal Projects',tagline:'Robotics · Mechatronics · Mechanical Design · Product Design · Product Management',school:'M.S. Mechanical Engineering & Applied Mechanics, UPenn · graduating Jun 2027',contact:'Contact:',copy:'Copy',copied:'Copied',foot:'Open to full-time roles in the US and China.',
-   g:{robo:'Robotics & Hardware',data:'Research & Data'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗'},
+   g:{robo:'Robotics & Hardware',data:'Research & Data'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗',details:'Details',github:'GitHub ↗',replay:'3D replay ↗'},
  zh:{title:'王长宇 · 个人作品集',tagline:'机器人 · 机电一体化 · 机械设计 · 产品设计 · 产品管理',school:'宾夕法尼亚大学 机械工程与应用力学硕士 · 2027 年 6 月毕业',contact:'联系：',copy:'复制',copied:'已复制',foot:'正在寻找中美两地的全职机会。',
-   g:{robo:'机器人与硬件',data:'科研与数据'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗'}
+   g:{robo:'机器人与硬件',data:'科研与数据'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗',details:'项目详情',github:'GitHub ↗',replay:'3D 回放 ↗'}
 };
 var P=[
-{id:'stir',g:'robo',year:'2026',tags:['Franka Panda','Jacobian control','ROS / RViz','Python'],
+{id:'stir',g:'robo',year:'2026',vid:'posts/stir/mixing.mp4',poster:'posts/stir/mixing-poster.jpg',
+ links:[{k:'details',u:'posts/stir/'},{k:'github',u:'https://github.com/wangcy0928/panda-cup-mixing'},{k:'replay',u:'https://wangcy0928.github.io/panda-cup-mixing/'}],tags:['Franka Panda','Jacobian control','ROS / RViz','Python'],
  t:{en:'Multi-Arm Robotic Beverage Line: Stirring Module',zh:'多机械臂饮品服务线：搅拌模块'},
  s:{en:'The controller that let a 7-DOF Franka arm stir drinks live on demo day.',zh:'让 7 自由度 Franka 机械臂在演示日现场搅拌饮品的控制器。'},
  o:{en:'University of Pennsylvania · Jan–May 2026 · Controls lead, stirring module',zh:'宾夕法尼亚大学 · 2026 年 1–5 月 · 搅拌模块控制负责人'},
  m:'tool sag 15–20 mm → <2 mm · 100 Hz · 0 spills',
- b:{en:['A 100 Hz closed-loop Cartesian controller: forward kinematics, pose-error feedback, and a Jacobian pseudo-inverse velocity solve that tracks an elliptical stir path with orientation locked.','Null-space projection re-centers the joints, so the arm does not drift over repeated cycles.','Z-axis integral compensation cut end-effector sag under a 200 g payload from 15–20 mm to under 2 mm. Velocity limits and a low-pass filter removed the resonance of the earlier playback approach.','Programmed trajectory commands and live visualization in ROS/RViz. Result: zero spills across the full demo day.'],
-    zh:['100 Hz 闭环笛卡尔空间控制器：正运动学 + 位姿误差反馈 + 雅可比伪逆速度求解，在锁定姿态的前提下跟踪椭圆搅拌轨迹。','零空间投影让关节回到中位，多次循环不漂移。','Z 轴积分补偿把 200 g 负载下的末端下沉量从 15–20 mm 压到 2 mm 以内；速度限幅加低通滤波消除了原先离线回放方案的机械共振。','用 ROS/RViz 编写轨迹指令与实时可视化。结果：演示日全天零洒漏。']}},
+ b:{en:['A 100 Hz closed-loop Cartesian controller: forward kinematics, pose-error feedback, and a Jacobian pseudo-inverse velocity solve that tracks an elliptical stir path with orientation locked.','Null-space projection re-centers the joints, so the arm does not drift over repeated cycles.','Z-axis integral compensation cut end-effector sag under a 200 g payload from 15–20 mm to under 2 mm. Velocity limits and a low-pass filter removed the resonance of the earlier playback approach.','Programmed trajectory commands and live visualization in ROS/RViz. Result: zero spills across the full demo day.','Afterwards I rebuilt the controller from scratch as an open simulation. Integrating the command from its own state cut xy tracking error from 13.7 mm to 0.7 mm against the course version.'],
+    zh:['100 Hz 闭环笛卡尔空间控制器：正运动学 + 位姿误差反馈 + 雅可比伪逆速度求解，在锁定姿态的前提下跟踪椭圆搅拌轨迹。','零空间投影让关节回到中位，多次循环不漂移。','Z 轴积分补偿把 200 g 负载下的末端下沉量从 15–20 mm 压到 2 mm 以内；速度限幅加低通滤波消除了原先离线回放方案的机械共振。','用 ROS/RViz 编写轨迹指令与实时可视化。结果：演示日全天零洒漏。','之后我从零把控制器重写成开源仿真：改为从上一次指令积分后，水平跟踪误差从课程版的 13.7 mm 降到 0.7 mm。']}},
 {id:'soft',g:'robo',year:'2023–24',tags:['Soft robotics','Smart materials','COMSOL','Team lead'],
  t:{en:'Magnetic Soft Robot for Pipe Inspection',zh:'磁控管道检测软体机器人'},
  s:{en:'Led a 5-person team building a soft robot that an electromagnetic field drives through pipe.',zh:'带领 5 人团队研制由电磁场驱动、可在管道内蠕动前进的软体机器人。'},
@@ -216,6 +220,8 @@ try{ var th=localStorage.getItem('cw-theme'); if(th) document.documentElement.da
 function x(f){return typeof f==='string'?f:(f[lang]||f.en)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 var GROUPS=['robo','data'];
+function thumbHtml(p){return p.poster?'<div class="thumb photo" aria-hidden="true"><img src="'+p.poster+'" alt=""></div>':'<div class="thumb" aria-hidden="true">'+SVG[p.id]+'</div>'}
+function mediaHtml(p){return p.vid?'<div class="pmedia photo"><video src="'+p.vid+'" poster="'+p.poster+'" autoplay muted loop playsinline aria-label="'+x(p.t)+'"></video></div>':'<div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div>'}
 
 function render(){
   var L=I[lang];
@@ -225,12 +231,12 @@ function render(){
   document.getElementById('index').innerHTML=GROUPS.map(function(g){
     return '<div><h2>'+L.g[g]+'</h2><ul>'+P.filter(function(p){return p.g===g}).map(function(p){return '<li><a href="#'+p.id+'">'+x(p.t)+'</a></li>'}).join('')+'</ul></div>'}).join('');
   document.getElementById('scroller').innerHTML=P.map(function(p){
-    return '<a class="slide" href="#'+p.id+'"><div class="thumb" aria-hidden="true">'+SVG[p.id]+'</div><span>'+x(p.t)+'</span></a>'}).join('');
+    return '<a class="slide" href="#'+p.id+'">'+thumbHtml(p)+'<span>'+x(p.t)+'</span></a>'}).join('');
   var html='';
   GROUPS.forEach(function(g){
     html+='<div class="group-h"><h2>'+L.g[g]+'</h2></div>';
     P.filter(function(p){return p.g===g}).forEach(function(p){
-      html+='<article class="card" id="'+p.id+'"><div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div><div class="pbody">'+
+      html+='<article class="card" id="'+p.id+'">'+mediaHtml(p)+'<div class="pbody">'+
         '<div class="kicker"><span>'+p.year+'</span><div class="tags">'+p.tags.map(function(t){return '<span>'+t+'</span>'}).join('')+'</div></div>'+
         '<h3>'+x(p.t)+'</h3><p class="sub">'+x(p.s)+'</p><p class="org">'+x(p.o)+'</p><p class="metric">'+esc(p.m)+'</p>'+
         '<div class="pts">'+x(p.b).map(function(t){return '<p>'+esc(t)+'</p>'}).join('')+'</div>'+
