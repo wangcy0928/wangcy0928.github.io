@@ -108,10 +108,24 @@ tr:last-child td{border-bottom:0}
 .small{font-size:14px;color:var(--soft)}
 
 pre.flow{margin:0;overflow-x:auto;padding:18px 20px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:14px/1.55 var(--mono)}
+.diagram{border:1px solid var(--line);background:#fff;padding:20px;overflow-x:auto;min-height:120px}
+.diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.diagram .wait{color:#69736e;font-size:14px;text-align:center}
+.math{overflow-x:auto;padding:14px 18px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.mods{display:grid;gap:0;border:1px solid var(--line)}
+.mods div{display:grid;grid-template-columns:200px minmax(0,1fr);gap:4px 18px;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface)}
+.mods div:first-child{border-top:0}
+.mods code{justify-self:start}
+.mods p{color:var(--muted);font-size:15px}
+@media (max-width:640px){.mods div{grid-template-columns:1fr}}
 
 footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;border-top:1px solid var(--line);color:var(--soft);font-size:14px;
   padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 </style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},chtml:{displayAlign:'left'}};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
 </head>
 <body>
 <header class="bar">
@@ -128,60 +142,114 @@ footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;b
 <article>
   <a class="back" href="../../#stir"><span data-l="en">← All projects</span><span data-l="zh">← 全部项目</span></a>
   <p class="eyebrow">2026 · MEAM 5200 · University of Pennsylvania</p>
-  <h1><span data-l="en">Upright-Cup Mixing on a 7-DOF Panda</span><span data-l="zh">7 自由度 Panda 机械臂端杯搅拌</span></h1>
-  <p class="lede" data-l="en">A Franka Panda holds a cup and moves it along a horizontal ellipse while keeping it upright, so the ingredients mix without spilling. I led the controls for this stirring module in the course project, which ran live on real Panda arms at Penn's GRASP Lab. I then rebuilt the controller from scratch as an open simulation to find out exactly why each design choice mattered.</p>
-  <p class="lede" data-l="zh">Franka Panda 机械臂端着杯子沿水平椭圆运动，同时保持杯身竖直，让食材混合而不洒出。课程项目中我负责这个搅拌模块的控制，最终在宾大 GRASP 实验室的真实 Panda 机械臂上现场演示。之后我从零把控制器重写成一个开源仿真，弄清每个设计选择到底为什么有效。</p>
+  <h1><span data-l="en">Multi-Arm Robotic Beverage Line: Stirring Module</span><span data-l="zh">多机械臂饮品服务线：搅拌模块</span></h1>
   <div class="btns">
-    <a href="https://github.com/wangcy0928/panda-cup-mixing" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://github.com/wangcy0928/panda-cup-mixing" target="_blank" rel="noopener">GitHub Repository ↗</a>
     <a class="ghost" href="https://wangcy0928.github.io/panda-cup-mixing/" target="_blank" rel="noopener"><span data-l="en">Full-screen 3D replay ↗</span><span data-l="zh">全屏 3D 回放 ↗</span></a>
   </div>
 
-  <div class="facts">
-    <div><span data-l="en">Role</span><span data-l="zh">角色</span><b data-l="en">Controls lead, stirring module</b><b data-l="zh">搅拌模块控制负责人</b></div>
-    <div><span data-l="en">Robot</span><span data-l="zh">机器人</span><b>Franka Panda, 7-DOF</b></div>
-    <div><span data-l="en">Control loop</span><span data-l="zh">控制频率</span><b>100 Hz</b></div>
-    <div><span data-l="en">Stack</span><span data-l="zh">技术栈</span><b>Python · NumPy · ROS / RViz</b></div>
-  </div>
-
-  <h2><span data-l="en">On the real robot</span><span data-l="zh">真机演示</span></h2>
-  <ul class="prose">
-    <li data-l="en">A 100 Hz Cartesian controller using Jacobian pseudo-inverse velocity mapping and null-space joint centering, following an elliptical stir path with the tool orientation held fixed.</li>
-    <li data-l="zh">100 Hz 笛卡尔空间控制器：雅可比伪逆速度映射 + 零空间关节回中，在保持工具姿态不变的前提下跟踪椭圆搅拌轨迹。</li>
-    <li data-l="en">Under a 200 g load the cup sagged 15–20 mm. Integral compensation brought that under 2 mm; velocity limits and a low-pass filter removed the vibration of the earlier replay approach.</li>
-    <li data-l="zh">200 g 负载下杯子下沉 15–20 mm，积分补偿把它压到 2 mm 以内；速度限幅和低通滤波消除了之前离线回放方案的振动。</li>
-    <li data-l="en">Trajectory commands and live visualization in ROS/RViz. Demo day finished with no spills.</li>
-    <li data-l="zh">用 ROS/RViz 实现轨迹指令和实时可视化。演示日全程零洒漏。</li>
-  </ul>
   <figure class="demo"><video src="demo.mp4" poster="demo-poster.jpg" controls autoplay muted loop playsinline aria-label="Franka Panda stirring a cup on demo day"></video>
-    <figcaption><span data-l="en">Demo day at Penn's GRASP Lab: the Panda moves the cup along the ellipse with the cup held upright.</span><span data-l="zh">宾大 GRASP 实验室演示日：Panda 端着杯子沿椭圆运动，杯身始终保持竖直。</span></figcaption></figure>
+    <figcaption><span data-l="en">Demo day at Penn's GRASP Lab: the Panda moves the cup along an ellipse while keeping it upright.</span><span data-l="zh">宾大 GRASP 实验室演示日：Panda 端着杯子沿椭圆运动，杯身始终保持竖直。</span></figcaption></figure>
 
-  <h2><span data-l="en">Interactive 3D replay: course controller vs. rebuild</span><span data-l="zh">可交互 3D 回放：课程版控制器 vs 重写版</span></h2>
-  <p class="prose" data-l="en">The course controller (v3) and my rebuild (v4) run side by side on the same simulated arm and load. Drag to rotate, scroll to zoom.</p>
-  <p class="prose" data-l="zh">课程版控制器（v3）和我的重写版（v4）在同一个仿真机械臂、同样负载下并排运行。拖动旋转视角，滚轮缩放。</p>
+  <!-- ============ Project Goal ============ -->
+  <h2><span data-l="en">Project Goal</span><span data-l="zh">项目目标</span></h2>
+  <div class="prose" data-l="en">
+    <p>In the course's multi-arm beverage line, each Franka Panda handles one step. The stirring module receives a filled cup from the upstream arm and mixes the ingredients by moving the cup along a horizontal ellipse, then hands it on. I was the controls lead for this module.</p>
+    <p>The controller had to:</p>
+  </div>
+  <div class="prose" data-l="zh">
+    <p>课程的多机械臂饮品服务线中，每台 Franka Panda 负责一个工序。搅拌模块从上游机械臂接过装好食材的杯子，让杯子沿水平椭圆运动把食材混匀，再交给下一站。我是这个模块的控制负责人。</p>
+    <p>控制器需要做到：</p>
+  </div>
+  <ul class="prose">
+    <li data-l="en">Track a horizontal ellipse (semi-axes 12 cm × 7 cm, about 2.5 s per loop) at 100 Hz.</li>
+    <li data-l="zh">以 100 Hz 跟踪水平椭圆轨迹（半轴 12 cm × 7 cm，每圈约 2.5 秒）。</li>
+    <li data-l="en">Keep the cup upright the whole time, so nothing spills.</li>
+    <li data-l="zh">全程保持杯身竖直，不洒出。</li>
+    <li data-l="en">Hold its height under a 200 g load without sagging.</li>
+    <li data-l="zh">在 200 g 负载下保持高度，不下沉。</li>
+    <li data-l="en">Start and stop smoothly, from wherever the upstream arm left the cup.</li>
+    <li data-l="zh">从上游机械臂交接时的实际位置出发，平稳启动、平稳停止。</li>
+  </ul>
+
+  <!-- ============ Program Logic ============ -->
+  <h2><span data-l="en">Program Logic Structure</span><span data-l="zh">程序逻辑结构</span></h2>
+  <div class="diagram" data-l="en" data-mermaid="logic-en"><p class="wait">Loading diagram…</p></div>
+  <div class="diagram" data-l="zh" data-mermaid="logic-zh"><p class="wait">图表加载中…</p></div>
+
+  <!-- ============ Design Evolution ============ -->
+  <h2><span data-l="en">Design Evolution: v1 → v4</span><span data-l="zh">设计迭代：v1 → v4</span></h2>
+  <p class="prose" data-l="en">The course controller went through three versions on the real robot. Afterwards I rebuilt it from scratch as an open simulation (v4) to understand why each change mattered, and to fix what v3 still got wrong.</p>
+  <p class="prose" data-l="zh">课程版控制器在真机上迭代了三版。之后我从零把它重写成开源仿真（v4），一是弄清楚每次改动为什么有效，二是修掉 v3 遗留的问题。</p>
+  <div class="diagram" data-l="en" data-mermaid="evo-en"><p class="wait">Loading diagram…</p></div>
+  <div class="diagram" data-l="zh" data-mermaid="evo-zh"><p class="wait">图表加载中…</p></div>
+
+  <!-- ============ Core Methods ============ -->
+  <h2><span data-l="en">Core Methods</span><span data-l="zh">核心方法</span></h2>
+
+  <h3><span data-l="en">Trajectory with smooth ramps</span><span data-l="zh">带平滑启停的轨迹</span></h3>
+  <ul class="prose">
+    <li data-l="en">The ellipse is centred on the cup's actual start pose, computed from FK of the measured joints, not a hard-coded point. A hard-coded centre makes the controller see an error at t = 0 and yank the cup.</li>
+    <li data-l="zh">椭圆中心取杯子的实际起始位置（由实测关节角做正运动学得到），而不是写死的坐标。写死的话，控制器在 t = 0 就会看到误差，把杯子猛拉一下。</li>
+    <li data-l="en">The amplitude ramps in and out with a smoothstep, so velocity starts and ends at zero:</li>
+    <li data-l="zh">幅值用 smoothstep 曲线平滑启停，起点和终点速度都为零：</li>
+  </ul>
+  <div class="math">\[ x_{des}(t) = x_0 + s(t)\begin{bmatrix} r_x\cos\omega t \\ r_y\sin\omega t \\ 0 \end{bmatrix}, \qquad s(u) = 3u^2 - 2u^3 \]</div>
+  <ul class="prose">
+    <li data-l="en">The feed-forward velocity includes the ramp's own derivative (product rule), which the course version left out:</li>
+    <li data-l="zh">前馈速度包含了幅值变化本身的导数项（乘积求导），课程版漏掉了这一项：</li>
+  </ul>
+  <div class="math">\[ v_{des} = s\,\dot{p}(t) + \dot{s}\,p(t) \]</div>
+
+  <h3><span data-l="en">Task-space feedback</span><span data-l="zh">任务空间反馈</span></h3>
+  <ul class="prose">
+    <li data-l="en">Linear velocity: feed-forward plus a proportional correction of the position error.</li>
+    <li data-l="zh">线速度：前馈速度加上位置误差的比例修正。</li>
+    <li data-l="en">Angular velocity: a rotation-error term that pulls the cup back to its upright start orientation.</li>
+    <li data-l="zh">角速度：姿态误差项，把杯子拉回初始的竖直姿态。</li>
+  </ul>
+  <div class="math">\[ v = v_{des} + K_p\,(x_{des} - x), \qquad \omega = k_r\, e_R(R_{home}, R), \qquad \xi = \begin{bmatrix} v \\ \omega \end{bmatrix} \]</div>
+
+  <h3><span data-l="en">Differential IK with null-space control</span><span data-l="zh">带零空间控制的微分逆运动学</span></h3>
+  <ul class="prose">
+    <li data-l="en">Damped least squares maps the 6-D task velocity to 7 joint velocities and stays bounded near singularities.</li>
+    <li data-l="zh">用阻尼最小二乘把 6 维任务速度映射到 7 个关节速度，在奇异位形附近也不会发散。</li>
+    <li data-l="en">The arm is redundant (7 joints, 6-D task), so the null-space term uses the spare motion to pull every joint back toward its start pose without moving the cup.</li>
+    <li data-l="zh">机械臂有冗余（7 个关节完成 6 维任务），零空间项利用这部分多余自由度把各关节拉回初始姿态，同时不影响杯子运动。</li>
+  </ul>
+  <div class="math">\[ J^{+} = J^{T}\left(JJ^{T} + \lambda^{2} I\right)^{-1}, \qquad \dot{q} = J^{+}\xi + \left(I - J^{+}J\right) k_n\,(q_{home} - q) \]</div>
+
+  <h3><span data-l="en">Velocity limits and command integration</span><span data-l="zh">速度限幅与指令积分</span></h3>
+  <ul class="prose">
+    <li data-l="en">If any joint would exceed its limit, the whole velocity vector is scaled down, so the cup keeps moving in the planned direction (clipping single joints would bend the path).</li>
+    <li data-l="zh">任何一个关节超速时，整个速度向量按比例缩小，杯子仍沿规划方向运动（逐个关节截断会让轨迹变形）。</li>
+    <li data-l="en">The position command integrates from its own previous value, not from the measured pose. This is the key change in v4 (see Findings).</li>
+    <li data-l="zh">位置指令从上一次的指令值积分，而不是从实测位姿积分。这是 v4 最关键的改动（见下方关键发现）。</li>
+  </ul>
+  <div class="math">\[ \dot{q} \leftarrow \frac{\dot{q}}{\max\left(1,\ \max_i |\dot{q}_i| / \dot{q}_{max,i}\right)}, \qquad q_{cmd}[k+1] = q_{cmd}[k] + \Delta t\,\dot{q} \]</div>
+
+  <!-- ============ Replay ============ -->
+  <h2><span data-l="en">Interactive 3D Replay: v3 vs v4</span><span data-l="zh">可交互 3D 回放：v3 vs v4</span></h2>
+  <p class="prose" data-l="en">The course controller (v3) and the rebuild (v4) run side by side on the same simulated arm and load. Drag to rotate, scroll to zoom.</p>
+  <p class="prose" data-l="zh">课程版（v3）和重写版（v4）在同一个仿真机械臂、同样负载下并排运行。拖动旋转视角，滚轮缩放。</p>
   <div class="viewer">
     <iframe id="mixing-viewer" src="https://wangcy0928.github.io/panda-cup-mixing/?embed" title="Interactive 3D replay of the mixing controllers" loading="lazy"></iframe>
     <p class="vnote" data-l="en">Replay of the Python simulation (simplified plant, not Gazebo or the real robot). Needs an internet connection to load.</p>
     <p class="vnote" data-l="zh">回放来自 Python 仿真（简化模型，不是 Gazebo，也不是真机），需要联网加载。</p>
   </div>
 
-  <h2><span data-l="en">How the controller works</span><span data-l="zh">控制器原理</span></h2>
-  <p class="prose" data-l="en">Every 10 ms the controller reads the joint angles, works out the joint velocities that move the cup toward its planned position, and sends a new position command.</p>
-  <p class="prose" data-l="zh">每 10 ms，控制器读取关节角，算出让杯子朝规划位置运动的关节速度，再发出新的位置指令。</p>
-<figure class="plot"><video src="mixing.mp4" poster="mixing-poster.jpg" autoplay muted loop playsinline aria-label="Simulated arm and top view of the cup path"></video>
-    <figcaption><span data-l="en">Simulation of the rebuilt controller (v4): the arm in 3D and the cup's path from above.</span><span data-l="zh">重写版控制器（v4）仿真：左为机械臂三维运动，右为杯子轨迹俯视图。</span></figcaption></figure>
-<pre class="flow">ellipse: x_des(t), v_des(t)
-q (measured) ─► FK ─► x, R
-
-v  = v_des + K (x_des − x)          task-space feedback
-ω  = k_r · e_R(R_home, R)           keep the cup upright
-
-dq = J⁺ [v; ω] + (I − J⁺J) · k_n (q_home − q)
-     damped least squares   null space: stop joint drift
-
-scale dq to the joint velocity limits
-q_cmd ← q_cmd + dt · dq  ─►  robot  ─►  next tick</pre>
-
-  <h2><span data-l="en">Results (simulation)</span><span data-l="zh">结果（仿真）</span></h2>
+  <!-- ============ Results ============ -->
+  <h2><span data-l="en">Results</span><span data-l="zh">结果</span></h2>
+  <h3><span data-l="en">On the real robot (v3)</span><span data-l="zh">真机（v3）</span></h3>
+  <ul class="prose">
+    <li data-l="en">Cup sag under the 200 g load: 15–20 mm → under 2 mm, after adding a stronger z-gain and an integral term.</li>
+    <li data-l="zh">200 g 负载下杯子下沉：从 15–20 mm 降到 2 mm 以内（加大 z 增益并加入积分项）。</li>
+    <li data-l="en">Velocity limits and a low-pass filter removed the rattling of the offline-replay version.</li>
+    <li data-l="zh">速度限幅和低通滤波消除了离线回放版本的抖动。</li>
+    <li data-l="en">Demo day finished with no spills.</li>
+    <li data-l="zh">演示日全程零洒漏。</li>
+  </ul>
+  <h3><span data-l="en">In simulation (same plant and load for every run)</span><span data-l="zh">仿真（所有版本使用同一模型和负载）</span></h3>
   <div class="tbl">
     <table>
       <thead><tr>
@@ -197,29 +265,44 @@ q_cmd ← q_cmd + dt · dq  ─►  robot  ─►  next tick</pre>
       </tbody>
     </table>
   </div>
-  <p class="small" data-l="en">Same simulated plant and load for every run. Peak horizontal acceleration is the proxy for spill risk.</p>
-  <p class="small" data-l="zh">所有运行使用同一仿真模型和负载。峰值水平加速度用来近似衡量洒出风险。</p>
+  <p class="small" data-l="en">Peak horizontal acceleration is the proxy for spill risk.</p>
+  <p class="small" data-l="zh">峰值水平加速度用来近似衡量洒出风险。</p>
+  <figure class="plot"><video src="mixing.mp4" poster="mixing-poster.jpg" autoplay muted loop playsinline aria-label="Simulated arm and top view of the cup path"></video>
+    <figcaption><span data-l="en">v4 in simulation: the arm in 3D (left) and the cup's path from above (right).</span><span data-l="zh">v4 仿真：左为机械臂三维运动，右为杯子轨迹俯视图。</span></figcaption></figure>
 
-  <h2><span data-l="en">What I learned</span><span data-l="zh">关键发现</span></h2>
+  <!-- ============ Findings ============ -->
+  <h2><span data-l="en">Key Findings</span><span data-l="zh">关键发现</span></h2>
   <h3><span data-l="en">1. Integrate from the command, not the measurement</span><span data-l="zh">1. 从上一次指令积分，而不是从实测值积分</span></h3>
-  <p class="prose" data-l="en">Restarting the command from the measured pose every tick leaves the joint controller almost no position error to push against, so the load makes the arm sag. That is why the course version needed a large z-gain and an extra integrator. Integrating from the previous command lets the correction build up in the command itself, which removes the sag with plain P gains.</p>
-  <p class="prose" data-l="zh">每个周期都从实测位姿重新起算指令，关节控制器几乎没有位置误差可以"用力"，负载就会把机械臂压下去。这正是课程版需要很大的 z 增益和额外积分器的原因。改成从上一次指令积分后，修正量会累积在指令本身，只用比例增益就消除了下沉。</p>
+  <p class="prose" data-l="en">Restarting the command from the measured pose every tick leaves the joint controller almost no position error to push against, so the load makes the arm sag. That is why v3 needed a large z-gain and an extra integrator. Integrating from the previous command lets the correction build up in the command itself, which removes the sag with plain P gains.</p>
+  <p class="prose" data-l="zh">每个周期都从实测位姿重新起算指令，关节控制器几乎没有位置误差可以"用力"，负载就会把机械臂压下去。这正是 v3 需要很大的 z 增益和额外积分器的原因。改成从上一次指令积分后，修正量会累积在指令本身，只用比例增益就消除了下沉。</p>
   <figure class="plot"><img src="2_integrate_from_command.png" alt="z and xy error over 20 s: integrating from the measured pose versus from the previous command" loading="lazy">
     <figcaption><span data-l="en">Same gains; only the integration start point differs.</span><span data-l="zh">增益相同，只改变积分起点。</span></figcaption></figure>
 
   <h3><span data-l="en">2. Null space stops joint drift</span><span data-l="zh">2. 零空间控制阻止关节漂移</span></h3>
-  <p class="prose" data-l="en">With 7 joints for a 6-D task, joints 1 and 7 can counter-rotate without moving the cup, and the pseudo-inverse lets them wander about 1.5 rad in 20 s. Pulling every joint back toward the start pose in the null space removes the drift without disturbing the cup.</p>
-  <p class="prose" data-l="zh">7 个关节完成 6 维任务，关节 1 和关节 7 可以反向转动而不影响杯子，伪逆解会让它们在 20 秒内漂移约 1.5 rad。在零空间里把所有关节拉回初始姿态，就能消除漂移，又不干扰杯子运动。</p>
+  <p class="prose" data-l="en">Joints 1 and 7 can counter-rotate without moving the cup, and the pseudo-inverse lets them wander about 1.5 rad in 20 s. Pulling every joint back toward the start pose in the null space removes the drift without disturbing the cup.</p>
+  <p class="prose" data-l="zh">关节 1 和关节 7 可以反向转动而不影响杯子，伪逆解会让它们在 20 秒内漂移约 1.5 rad。在零空间里把所有关节拉回初始姿态，就能消除漂移，又不干扰杯子运动。</p>
   <figure class="plot"><img src="3_null_space_drift.png" alt="Joint 1 drift with and without null-space centering" loading="lazy"></figure>
 
   <h3><span data-l="en">3. Gains and filtering</span><span data-l="zh">3. 增益与滤波</span></h3>
-  <p class="prose" data-l="en">The course controller used low task gains and a low-pass filter that adds about 19 ms of lag. Reverting either one in the rebuild roughly triples the xy error. The arm stays far from a singularity on this path, so that was not the cause.</p>
-  <p class="prose" data-l="zh">课程版用了较低的任务空间增益，以及一个带来约 19 ms 延迟的低通滤波器。在重写版里单独恢复其中任意一项，水平误差都会增加约三倍。这条轨迹离奇异位形很远，所以问题不在奇异性。</p>
+  <p class="prose" data-l="en">v3 used low task gains and a low-pass filter that adds about 19 ms of lag. Reverting either one in v4 roughly triples the xy error. The arm stays far from a singularity on this path, so that was not the cause.</p>
+  <p class="prose" data-l="zh">v3 用了较低的任务空间增益，以及一个带来约 19 ms 延迟的低通滤波器。在 v4 里单独恢复其中任意一项，水平误差都会增加约三倍。这条轨迹离奇异位形很远，所以问题不在奇异性。</p>
 
+  <!-- ============ Modules ============ -->
+  <h2><span data-l="en">Implementation Modules</span><span data-l="zh">代码模块</span></h2>
+  <div class="mods">
+    <div><code>kinematics.py</code><p data-l="en">Panda forward kinematics and analytic Jacobian from DH parameters, checked against finite differences.</p><p data-l="zh">基于 DH 参数的 Panda 正运动学和解析雅可比，并用有限差分校验。</p></div>
+    <div><code>controller.py</code><p data-l="en">The mixing controller. Every design choice is a flag in <code>Config</code>, so each one can be switched off and measured.</p><p data-l="zh">搅拌控制器。每个设计选择都是 <code>Config</code> 里的一个开关，可以单独关掉做对比。</p></div>
+    <div><code>sim_robot.py</code><p data-l="en">Simplified robot: joint PD tracking, unmodelled payload, one-tick delay and encoder noise.</p><p data-l="zh">简化机器人模型：关节 PD 跟踪、未建模负载、一个周期延迟和编码器噪声。</p></div>
+    <div><code>run_experiments.py</code><p data-l="en">Runs the v1–v4 history and the one-at-a-time ablations, writes plots and <code>results/metrics.md</code>.</p><p data-l="zh">运行 v1–v4 对比和逐项消融实验，输出图表和 <code>results/metrics.md</code>。</p></div>
+    <div><code>export_viewer.py</code><p data-l="en">Runs v3 and v4 and writes the interactive 3D replay above.</p><p data-l="zh">运行 v3 和 v4，生成上方的可交互 3D 回放。</p></div>
+    <div><code>ros/mixing_v4.py</code><p data-l="en">v4 ported to the MEAM 5200 ROS interface, with CSV logging.</p><p data-l="zh">v4 移植到 MEAM 5200 课程 ROS 接口的版本，带 CSV 日志。</p></div>
+  </div>
+
+  <!-- ============ Limitations ============ -->
   <h2><span data-l="en">Limitations</span><span data-l="zh">局限</span></h2>
   <ul class="prose">
-    <li data-l="en">The v4 rebuild has only run in simulation. A ROS port to the course interface exists but has not been tested on hardware.</li>
-    <li data-l="zh">v4 重写版只在仿真中运行过。已经移植到课程 ROS 接口，但还没上真机测试。</li>
+    <li data-l="en">v4 has only run in simulation. The ROS port runs end to end against a stand-in for the course interface but has not been tested on hardware.</li>
+    <li data-l="zh">v4 只在仿真中运行过。ROS 移植版已经在课程接口的替身上跑通，但还没上真机测试。</li>
     <li data-l="en">The robot model is simplified (no full dynamics). It is calibrated only so that v1 sags 15–20 mm, as seen on the real robot, so trends are more reliable than exact numbers.</li>
     <li data-l="zh">机器人模型是简化的（没有完整动力学），只按真机上观察到的 v1 下沉 15–20 mm 做了标定，因此趋势比具体数值更可信。</li>
   </ul>
@@ -243,6 +326,70 @@ q_cmd ← q_cmd + dt · dq  ─►  robot  ─►  next tick</pre>
     if(e.data&&e.data.type==='mixing-viewer-height')document.getElementById('mixing-viewer').style.height=e.data.height+'px';
   });
 })();
+</script>
+
+<script type="text/plain" id="logic-en">
+flowchart TD
+    A["Cup handed over by upstream arm"] --> B["Read joint angles q"]
+    B --> C["FK: start pose x0, R_home<br/>(centre the ellipse here)"]
+    C --> D["100 Hz control loop"]
+    D --> E["Desired pose on ellipse<br/>x_des, v_des with smooth ramp"]
+    E --> F["Measure q, run FK<br/>current x, R"]
+    F --> G["Task-space feedback<br/>v = v_des + K·e"]
+    F --> H["Orientation feedback<br/>ω = k_r·e_R"]
+    G --> I["Damped least-squares IK<br/>dq = J⁺ [v; ω]"]
+    H --> I
+    I --> J["Null space: pull joints<br/>back to start pose"]
+    J --> K["Scale dq to joint<br/>velocity limits"]
+    K --> L["Integrate command<br/>q_cmd += dt·dq"]
+    L --> M["Send q_cmd, dq to robot"]
+    M --> N{"20 s done?"}
+    N -- No --> D
+    N -- Yes --> O["Smooth ramp-out, hold 1 s"]
+    O --> P["Hand cup to next station"]
+</script>
+<script type="text/plain" id="logic-zh">
+flowchart TD
+    A["上游机械臂交接杯子"] --> B["读取关节角 q"]
+    B --> C["正运动学：起始位姿 x0、R_home<br/>（椭圆中心取在这里）"]
+    C --> D["100 Hz 控制循环"]
+    D --> E["计算椭圆上的目标位姿<br/>x_des、v_des（带平滑启停）"]
+    E --> F["测量 q，正运动学<br/>得到当前 x、R"]
+    F --> G["任务空间反馈<br/>v = v_des + K·e"]
+    F --> H["姿态反馈<br/>ω = k_r·e_R"]
+    G --> I["阻尼最小二乘逆运动学<br/>dq = J⁺ [v; ω]"]
+    H --> I
+    I --> J["零空间：把关节<br/>拉回初始姿态"]
+    J --> K["按关节速度上限<br/>整体缩放 dq"]
+    K --> L["指令积分<br/>q_cmd += dt·dq"]
+    L --> M["向机器人发送 q_cmd、dq"]
+    M --> N{"20 秒结束？"}
+    N -- 否 --> D
+    N -- 是 --> O["平滑减速，保持 1 秒"]
+    O --> P["把杯子交给下一站"]
+</script>
+<script type="text/plain" id="evo-en">
+flowchart TD
+    V1["v1 · P-only control<br/>integrate from measured q"] -- "cup sagged 15–20 mm" --> V2["v2 · offline plan + replay<br/>no feedback"]
+    V2 -- "rattled on hardware" --> V3["v3 · course final<br/>high z-gain + integral + LPF"]
+    V3 -- "sag fixed, but loose xy<br/>tracking and filter lag" --> V4["v4 · rebuild<br/>integrate from command,<br/>higher gains, no LPF,<br/>all-joint null space, smooth ramps"]
+</script>
+<script type="text/plain" id="evo-zh">
+flowchart TD
+    V1["v1 · 纯比例控制<br/>从实测 q 积分"] -- "杯子下沉 15–20 mm" --> V2["v2 · 离线规划 + 回放<br/>无反馈"]
+    V2 -- "真机上抖动" --> V3["v3 · 课程最终版<br/>大 z 增益 + 积分 + 低通滤波"]
+    V3 -- "下沉解决了，但水平跟踪<br/>偏松、滤波有延迟" --> V4["v4 · 重写版<br/>从指令积分、提高增益、<br/>去掉滤波、全关节零空间、平滑启停"]
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:false,theme:"default",securityLevel:"strict",fontFamily:'"IBM Plex Sans","Noto Sans SC",sans-serif',flowchart:{nodeSpacing:40,rankSpacing:50,htmlLabels:true}});
+const boxes=document.querySelectorAll("[data-mermaid]");
+for(const box of boxes){
+  const id=box.dataset.mermaid;
+  const code=document.getElementById(id).textContent;
+  try{const {svg}=await mermaid.render("m-"+id,code);box.innerHTML=svg;}
+  catch(e){box.innerHTML='<p class="wait">'+(box.dataset.l==="zh"?"图表加载失败，请刷新页面。":"The diagram failed to load. Refresh the page to try again.")+'</p>';}
+}
 </script>
 </body>
 </html>
