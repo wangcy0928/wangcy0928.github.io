@@ -86,7 +86,9 @@ ul.prose li::marker{color:var(--accent)}
 
 figure{margin:0;border:1px solid var(--line);background:var(--surface)}
 figure img,figure video{display:block;width:100%;height:auto}
-figure.plot img{background:#fff}
+figure.plot img,figure.plot video{background:#fff}
+figure.demo{background:#0c0e0d}
+figure.demo video{max-height:min(78vh,720px);width:auto;max-width:100%;margin:0 auto}
 figcaption{padding:10px 14px;color:var(--soft);font-size:14px}
 .viewer{border:1px solid var(--line);background:var(--surface)}
 .viewer iframe{display:block;width:100%;height:900px;border:0;background:var(--surface)}
@@ -150,7 +152,8 @@ footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;b
     <li data-l="en">Trajectory commands and live visualization in ROS/RViz. Demo day finished with no spills.</li>
     <li data-l="zh">用 ROS/RViz 实现轨迹指令和实时可视化。演示日全程零洒漏。</li>
   </ul>
-  <div class="placeholder"><span data-l="en">Demo-day video coming soon.</span><span data-l="zh">现场演示视频即将上传。</span></div>
+  <figure class="demo"><video src="demo.mp4" poster="demo-poster.jpg" controls autoplay muted loop playsinline aria-label="Franka Panda stirring a cup on demo day"></video>
+    <figcaption><span data-l="en">Demo day at Penn's GRASP Lab: the Panda moves the cup along the ellipse with the cup held upright.</span><span data-l="zh">宾大 GRASP 实验室演示日：Panda 端着杯子沿椭圆运动，杯身始终保持竖直。</span></figcaption></figure>
 
   <h2><span data-l="en">Interactive 3D replay: course controller vs. rebuild</span><span data-l="zh">可交互 3D 回放：课程版控制器 vs 重写版</span></h2>
   <p class="prose" data-l="en">The course controller (v3) and my rebuild (v4) run side by side on the same simulated arm and load. Drag to rotate, scroll to zoom.</p>
@@ -164,6 +167,8 @@ footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;b
   <h2><span data-l="en">How the controller works</span><span data-l="zh">控制器原理</span></h2>
   <p class="prose" data-l="en">Every 10 ms the controller reads the joint angles, works out the joint velocities that move the cup toward its planned position, and sends a new position command.</p>
   <p class="prose" data-l="zh">每 10 ms，控制器读取关节角，算出让杯子朝规划位置运动的关节速度，再发出新的位置指令。</p>
+<figure class="plot"><video src="mixing.mp4" poster="mixing-poster.jpg" autoplay muted loop playsinline aria-label="Simulated arm and top view of the cup path"></video>
+    <figcaption><span data-l="en">Simulation of the rebuilt controller (v4): the arm in 3D and the cup's path from above.</span><span data-l="zh">重写版控制器（v4）仿真：左为机械臂三维运动，右为杯子轨迹俯视图。</span></figcaption></figure>
 <pre class="flow">ellipse: x_des(t), v_des(t)
 q (measured) ─► FK ─► x, R
 
