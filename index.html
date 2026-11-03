@@ -93,6 +93,18 @@ h1,h2,h3{line-height:1.12;text-wrap:balance}
 .thumb.photo,.pmedia.photo{padding:0;background:#fff;overflow:hidden}
 .thumb.photo img{width:100%;height:100%;object-fit:cover}
 .pmedia.photo video{width:100%;height:100%;object-fit:contain;display:block}
+.pmedia.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1px;padding:0;background:var(--line);place-items:stretch}
+.pmedia.split .half{position:relative;overflow:hidden;min-height:0}
+.pmedia.split .sim{background:#fff}
+.pmedia.split .real{background:#0c0e0d}
+.pmedia.split video{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pmedia.split .sim video{object-fit:contain}
+.pmedia.split .real video{object-fit:cover}
+.vlabel{position:absolute;left:10px;bottom:10px;padding:3px 9px;border-radius:4px;background:rgba(12,14,13,.72);color:#f2f5f3;font:600 12px var(--mono);letter-spacing:.04em}
+@media (max-width:980px){.pmedia.split{aspect-ratio:1/1;min-height:0}}
+.pmedia.photo.real{background:#0c0e0d}
+.pmedia.photo.real video{position:absolute;inset:0}
+.pmedia.photo.real{position:relative}
 
 /* cards */
 main{width:min(1400px,100%);margin:0 auto;padding-block:34px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
@@ -182,7 +194,7 @@ var I={
    g:{robo:'机器人与硬件',data:'科研与数据'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗',details:'项目详情',github:'GitHub ↗',replay:'3D 回放 ↗'}
 };
 var P=[
-{id:'stir',g:'robo',year:'2026',vid:'posts/stir/mixing.mp4',poster:'posts/stir/mixing-poster.jpg',
+{id:'stir',g:'robo',year:'2026',split:[{v:'posts/stir/mixing-tall.mp4',p:'posts/stir/mixing-tall-poster.jpg',l:{en:'Simulation',zh:'仿真'}},{v:'posts/stir/demo.mp4',p:'posts/stir/demo-poster.jpg',l:{en:'Real robot',zh:'真机'}}],poster:'posts/stir/demo-thumb.jpg',
  links:[{k:'details',u:'posts/stir/'},{k:'github',u:'https://github.com/wangcy0928/panda-cup-mixing'},{k:'replay',u:'https://wangcy0928.github.io/panda-cup-mixing/'}],tags:['Franka Panda','Jacobian control','ROS / RViz','Python'],
  t:{en:'Multi-Arm Robotic Beverage Line: Stirring Module',zh:'多机械臂饮品服务线：搅拌模块'},
  s:{en:'The controller that let a 7-DOF Franka arm stir drinks live on demo day.',zh:'让 7 自由度 Franka 机械臂在演示日现场搅拌饮品的控制器。'},
@@ -221,7 +233,7 @@ function x(f){return typeof f==='string'?f:(f[lang]||f.en)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 var GROUPS=['robo','data'];
 function thumbHtml(p){return p.poster?'<div class="thumb photo" aria-hidden="true"><img src="'+p.poster+'" alt=""></div>':'<div class="thumb" aria-hidden="true">'+SVG[p.id]+'</div>'}
-function mediaHtml(p){return p.vid?'<div class="pmedia photo"><video src="'+p.vid+'" poster="'+p.poster+'" autoplay muted loop playsinline aria-label="'+x(p.t)+'"></video></div>':'<div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div>'}
+function mediaHtml(p){if(p.split)return '<div class="pmedia split">'+p.split.map(function(s,i){return '<div class="half'+(i?' real':' sim')+'"><video src="'+s.v+'" poster="'+s.p+'" autoplay muted loop playsinline aria-label="'+x(s.l)+'"></video><span class="vlabel">'+x(s.l)+'</span></div>'}).join('')+'</div>';return p.vid?'<div class="pmedia photo'+(p.real?' real':'')+'"><video src="'+p.vid+'" poster="'+p.poster+'" autoplay muted loop playsinline aria-label="'+x(p.t)+'"></video></div>':'<div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div>'}
 
 function render(){
   var L=I[lang];
