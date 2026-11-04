@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Magnetic Soft Pipe Robot | Changyu Wang</title>
+<meta name="description" content="An electromagnetically driven peristaltic soft robot for pipe inspection: closed-magnetic-circuit actuators, soft-magnetic elastomer, modular walking units. PRC patent CN220366121U.">
+<script>
+try{var t=localStorage.getItem('cw-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+try{if(localStorage.getItem('cw-lang')==='zh')document.documentElement.lang='zh-CN'}catch(e){}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#101312; --top:#1a1d1c; --surface:#171a19; --surface-2:#212524;
+  --text:#ecefed; --muted:#b4bdb9; --soft:#828c88; --line:#2f3533;
+  --accent:#2aa3dc; --accent-warm:#f0906a; --go:#17864f; --go-line:#2fbf74; --go-hi:#20a863;
+  --good:#3fcf8e;
+  --sans:"IBM Plex Sans","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c; --good:#13804f;
+}}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c; --good:#13804f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;padding-top:env(safe-area-inset-top,0px);background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16.5px;line-height:1.65}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-warm)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3,p{margin:0;overflow-wrap:anywhere}
+h1,h2,h3{line-height:1.15;text-wrap:balance}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:1px 6px;border-radius:4px}
+
+html[lang="en"] [data-l="zh"],html[lang="zh-CN"] [data-l="en"]{display:none!important}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:11;background:var(--bg)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text);font-weight:700}
+.brand b{display:grid;place-items:center;width:34px;height:34px;background:var(--text);color:var(--bg);font-size:14px}
+.acts{display:flex;align-items:center;gap:10px}
+.lang{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden}
+.lang button{min-width:46px;height:32px;border:0;background:transparent;color:var(--accent);cursor:pointer;font:700 14px var(--sans)}
+.lang button+button{border-left:1px solid var(--accent)}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.theme{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;font-size:16px}
+
+article{width:min(980px,100%);margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+.back{font-weight:700;font-size:15px}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+h1{font-size:clamp(30px,4.4vw,48px);font-weight:700;letter-spacing:-.01em}
+.lede{font-size:clamp(17px,1.9vw,20px);color:var(--muted);max-width:66ch}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btns a{display:inline-flex;align-items:center;min-height:40px;padding:8px 16px;border:1px solid var(--go-line);border-radius:4px;background:var(--go);color:#f4fff8;font-weight:700;font-size:15px}
+.btns a:hover{background:var(--go-hi);color:#fff}
+.btns a.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btns a.ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+h2{font-size:clamp(23px,2.6vw,30px);margin-top:26px}
+h3{font-size:19px;margin-top:6px}
+.prose{display:grid;gap:12px;color:var(--muted);max-width:70ch}
+.prose b{color:var(--text);font-weight:600}
+ul.prose{margin:0;padding-left:1.2em}
+p.prose{display:block}
+ul.prose li::marker{color:var(--accent)}
+
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.facts div{background:var(--surface);padding:14px 16px;display:grid;gap:2px;min-width:0}
+.facts span{font-size:12.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+.facts b{font-size:15px;font-weight:600}
+@media (max-width:720px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+figure{margin:0;border:1px solid var(--line);background:var(--surface)}
+figure img,figure video{display:block;width:100%;height:auto}
+figure.plot img,figure.plot video{background:#fff}
+figure.demo{background:#0c0e0d}
+figure.demo video{max-height:min(78vh,720px);width:auto;max-width:100%;margin:0 auto}
+figcaption{padding:10px 14px;color:var(--soft);font-size:14px}
+.viewer{border:1px solid var(--line);background:var(--surface)}
+.viewer iframe{display:block;width:100%;height:900px;border:0;background:var(--surface)}
+.viewer .vnote{padding:10px 14px;color:var(--soft);font-size:14px;border-top:1px solid var(--line)}
+.placeholder{display:grid;place-items:center;min-height:220px;padding:24px;text-align:center;color:var(--soft);border:1px dashed var(--line);background:var(--surface);font-size:15px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:600;background:var(--surface-2)}
+td{color:var(--muted);background:var(--surface)}
+td.n{font-family:var(--mono);font-size:14px;text-align:right}
+th.n{text-align:right}
+tr.best td{color:var(--text);font-weight:600}
+tr.best td.n{color:var(--good)}
+tr:last-child td{border-bottom:0}
+.small{font-size:14px;color:var(--soft)}
+
+pre.flow{margin:0;overflow-x:auto;padding:18px 20px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:14px/1.55 var(--mono)}
+.diagram{border:1px solid var(--line);background:#fff;padding:20px;overflow-x:auto;min-height:120px}
+.diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.diagram .wait{color:#69736e;font-size:14px;text-align:center}
+.math{overflow-x:auto;padding:14px 18px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.mods{display:grid;gap:0;border:1px solid var(--line)}
+.mods div{display:grid;grid-template-columns:200px minmax(0,1fr);gap:4px 18px;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface)}
+.mods div:first-child{border-top:0}
+.mods code{justify-self:start}
+.mods p{color:var(--muted);font-size:15px}
+@media (max-width:640px){.mods div{grid-template-columns:1fr}}
+.figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.figs figure img{background:#fff;padding:14px;aspect-ratio:3/2;object-fit:contain}
+@media (max-width:700px){.figs{grid-template-columns:1fr}}
+.mods div > code{align-self:start}
+
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;border-top:1px solid var(--line);color:var(--soft);font-size:14px;
+  padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},chtml:{displayAlign:'left'}};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="../../"><b>CW</b>Changyu Wang</a>
+  <div class="acts">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-en" data-lang="en">EN</button>
+      <button type="button" id="lang-zh" data-lang="zh">中文</button>
+    </div>
+    <button class="theme" type="button" id="theme" aria-label="Toggle light and dark mode">◐</button>
+  </div>
+</header>
+
+<article>
+  <a class="back" href="../../#soft"><span data-l="en">← All projects</span><span data-l="zh">← 全部项目</span></a>
+  <p class="eyebrow">2023–24 · NCUT &amp; BJTU Joint Lab</p>
+  <h1><span data-l="en">Electromagnetic Peristaltic Soft Robot for Pipe Inspection</span><span data-l="zh">基于电磁控制的蠕动式管道软体机器人</span></h1>
+  <div class="btns">
+    <a href="https://patents.google.com/patent/CN220366121U/en" target="_blank" rel="noopener"><span data-l="en">Patent CN220366121U ↗</span><span data-l="zh">专利 CN220366121U ↗</span></a>
+  </div>
+
+  <figure class="plot"><video src="sim.mp4" poster="sim-poster.jpg" controls autoplay muted loop playsinline aria-label="Simulation of the robot crawling through a pipe"></video>
+    <figcaption><span data-l="en">Crawling simulation: walking units take turns gripping the pipe wall while the center bodies stretch and contract. Strokes and timing are illustrative.</span><span data-l="zh">蠕动模拟：行走单元轮流撑住管壁，中心连接体交替伸缩，带动整机前进。行程和时间仅作示意。</span></figcaption></figure>
+
+  <div class="facts">
+    <div><span data-l="en">Role</span><span data-l="zh">角色</span><b data-l="en">Project leader, 5-member team</b><b data-l="zh">项目负责人，5 人团队</b></div>
+    <div><span data-l="en">Advisor</span><span data-l="zh">指导老师</span><b data-l="en">Dr. Hanming Zhang</b><b data-l="zh">Hanming Zhang 博士</b></div>
+    <div><span data-l="en">Timeline</span><span data-l="zh">时间</span><b>Mar 2023 – Jun 2024</b></div>
+    <div><span data-l="en">Output</span><span data-l="zh">成果</span><b data-l="en">PRC utility patent</b><b data-l="zh">国家实用新型专利</b></div>
+  </div>
+
+  <!-- ============ Goal ============ -->
+  <h2><span data-l="en">Project Goal</span><span data-l="zh">项目目标</span></h2>
+  <div class="prose" data-l="en">
+    <p>Inspecting the inside of a pipe means fitting a robot into a narrow, curved space where wheels and rigid links struggle. Soft robots adapt to that space better, but each common drive has a drawback: shape-memory alloys respond slowly, pneumatic drives carry heavy valves and tubing, and existing electromagnetic designs are complex and hard to control precisely.</p>
+    <p>We set out to build a soft pipe robot that:</p>
+  </div>
+  <div class="prose" data-l="zh">
+    <p>管道内部检测需要机器人钻进狭窄、弯曲的空间，轮式和刚性连杆结构在这里很难施展。软体机器人适应性更好，但常见的几种驱动方式各有短板：记忆合金响应慢，气动要带很重的气阀和管路，现有的电磁驱动方案结构复杂、难以精确控制。</p>
+    <p>我们的目标是做一款管道软体机器人，做到：</p>
+  </div>
+  <ul class="prose">
+    <li data-l="en">Moves by peristalsis (inchworm-style crawling), driven only by the current in its coils.</li>
+    <li data-l="zh">只靠线圈电流驱动，以蠕动方式（类似尺蠖）前进。</li>
+    <li data-l="en">Grips the pipe wall itself, with no external field or tether pulling it.</li>
+    <li data-l="zh">自己撑住管壁，不依赖外部磁场或拖拽。</li>
+    <li data-l="en">Has a simple structure that is easy to assemble.</li>
+    <li data-l="zh">结构简单，容易组装。</li>
+    <li data-l="en">Is modular, so units can be added for longer pipes or to carry other tools.</li>
+    <li data-l="zh">模块化，可以增加单元来适应更长的管道，或挂载其他功能部件。</li>
+  </ul>
+
+  <!-- ============ Structure ============ -->
+  <h2><span data-l="en">System Structure</span><span data-l="zh">系统结构</span></h2>
+  <p class="prose" data-l="en">The robot is a chain of two kinds of module. A <b>walking unit</b> holds two telescopic legs with suction cups that push out against the pipe wall. A <b>center body</b> links two walking units and changes length. The legs of neighbouring walking units are crossed at 90°, so the robot braces the wall in two planes.</p>
+  <p class="prose" data-l="zh">机器人由两种模块串联而成。<b>行走单元</b>带两条伸缩腿，腿端装吸盘，向外撑住管壁。<b>中心连接体</b>连接两个行走单元，自身可以伸长和缩短。相邻行走单元的伸缩腿呈 90° 十字交错，在两个方向上同时撑住管壁。</p>
+  <div class="diagram" data-l="en" data-mermaid="struct-en"><p class="wait">Loading diagram…</p></div>
+  <div class="diagram" data-l="zh" data-mermaid="struct-zh"><p class="wait">图表加载中…</p></div>
+  <div class="figs">
+    <figure class="plot"><img src="fig4.png" alt="Patent figure 4: three center bodies in series inside a pipe" loading="lazy"><figcaption><span data-l="en">Three center bodies in series inside a pipe (patent fig. 4).</span><span data-l="zh">三个中心连接体串联在管道内（专利附图 4）。</span></figcaption></figure>
+    <figure class="plot"><img src="fig1a.png" alt="Patent figure 1a: walking unit housing, bellows and telescopic legs" loading="lazy"><figcaption><span data-l="en">One module: walking-unit housing (1), telescopic leg (4), suction cup (5) (patent fig. 1a).</span><span data-l="zh">单个模块：行走单元舱体 (1)、伸缩腿 (4)、吸盘 (5)（专利附图 1a）。</span></figcaption></figure>
+  </div>
+
+  <!-- ============ Locomotion logic ============ -->
+  <h2><span data-l="en">Locomotion Logic</span><span data-l="zh">运动逻辑</span></h2>
+  <p class="prose" data-l="en">The walking units form two groups that take turns: one group anchors to the wall while the center bodies push or pull the other group forward. Repeating the cycle moves the whole robot along the pipe, as in the simulation above.</p>
+  <p class="prose" data-l="zh">行走单元分成两组轮流工作：一组撑住管壁做"锚点"，中心连接体伸缩，把另一组推（拉）向前。循环往复，整机就沿管道前进，过程和上方的模拟视频一致。</p>
+  <div class="diagram" data-l="en" data-mermaid="gait-en"><p class="wait">Loading diagram…</p></div>
+  <div class="diagram" data-l="zh" data-mermaid="gait-zh"><p class="wait">图表加载中…</p></div>
+
+  <!-- ============ Core methods ============ -->
+  <h2><span data-l="en">Core Methods</span><span data-l="zh">核心方法</span></h2>
+
+  <h3><span data-l="en">Closed-magnetic-circuit actuator</span><span data-l="zh">闭合磁路驱动单元</span></h3>
+  <ul class="prose">
+    <li data-l="en">Both module types use the same actuator: two axially magnetized NdFeB magnets, facing N to S so they attract, joined by a soft-magnetic elastomer. A coil and a spring sit inside the elastomer, and a bellows wraps the whole unit.</li>
+    <li data-l="zh">两种模块用的是同一种驱动单元：两块轴向充磁的钕铁硼永磁体 N–S 相对、相互吸引，中间用软磁弹性体连接；弹性体内嵌线圈和弹簧，外面包一层波纹管。</li>
+    <li data-l="en">The magnets and the soft-magnetic elastomer form a closed magnetic circuit. Current in the coil adds to or subtracts from the magnets' own field, which changes how hard the magnets pull together.</li>
+    <li data-l="zh">永磁体和软磁弹性体组成闭合磁路。线圈通电产生的磁场与永磁体自身磁场叠加，增强或削弱两块磁体之间的吸引力。</li>
+    <li data-l="en">The spring and the elastomer push back. Raising or reversing the current moves the balance point, so the unit contracts or extends. Current size and direction set the stroke and the crawling speed.</li>
+    <li data-l="zh">弹簧和弹性体提供回弹力。改变电流大小或方向，就改变了力的平衡点，单元随之收缩或伸长。电流大小和方向决定伸缩量和爬行速度。</li>
+  </ul>
+  <div class="math">\[ B_{gap} = B_{pm} + B_{coil}(I),\quad B_{coil} \propto N I, \qquad F_{mag} \approx \frac{B_{gap}^{2} A}{2\mu_0}, \qquad F_{mag}(I) = k\,\Delta x \]</div>
+  <p class="small" data-l="en">A simplified model for explaining the principle: the field in the gap is the magnets' field plus the coil's; the attraction grows with the field squared; the unit settles where attraction equals the spring and elastomer restoring force.</p>
+  <p class="small" data-l="zh">用于说明原理的简化模型：气隙磁场 = 永磁体磁场 + 线圈磁场；吸引力大致与磁场的平方成正比；单元停在吸引力与弹簧、弹性体回弹力相等的位置。</p>
+  <div class="diagram" data-l="en" data-mermaid="act-en"><p class="wait">Loading diagram…</p></div>
+  <div class="diagram" data-l="zh" data-mermaid="act-zh"><p class="wait">图表加载中…</p></div>
+  <div class="figs">
+    <figure class="plot"><img src="fig3b.png" alt="Patent figure 3b: center body cross-section" loading="lazy"><figcaption><span data-l="en">Center body section: magnet (11), bellows (12), spring (13), soft-magnetic elastomer (14), coil (15).</span><span data-l="zh">中心连接体剖面：永磁体 (11)、波纹管 (12)、弹簧 (13)、软磁弹性体 (14)、线圈 (15)。</span></figcaption></figure>
+    <figure class="plot"><img src="fig2a.png" alt="Patent figure 2a: walking unit legs with suction cups" loading="lazy"><figcaption><span data-l="en">Walking unit: the same actuator drives two legs out against the pipe wall.</span><span data-l="zh">行走单元：同样的驱动单元把两条腿向外推，撑住管壁。</span></figcaption></figure>
+  </div>
+
+  <h3><span data-l="en">Soft-magnetic elastomer</span><span data-l="zh">软磁弹性体材料</span></h3>
+  <ul class="prose">
+    <li data-l="en">A porous composite: foam silicone loaded with magnetic powder or magnetic fibers. It conducts magnetic flux like iron yet compresses and springs back like a sponge.</li>
+    <li data-l="zh">多孔复合材料：泡沫硅胶中掺入磁粉或导磁纤维。它像铁一样导磁，又像海绵一样能压缩、能回弹。</li>
+    <li data-l="en">We formulated magnetorheological-fluid and magnetic-sponge composites, and moulded the elastomer to different diameters and lengths for the two module sizes.</li>
+    <li data-l="zh">我们配制了磁流变液和磁性海绵复合材料，并用模具把弹性体做成不同直径和长度，分别用于两种尺寸的模块。</li>
+  </ul>
+
+  <h3><span data-l="en">Simulation and measurement</span><span data-l="zh">仿真与测量</span></h3>
+  <ul class="prose">
+    <li data-l="en">Compared reinforcement designs for the compliant body in COMSOL FEA before building them.</li>
+    <li data-l="zh">先用 COMSOL 有限元仿真比较柔性本体的几种加固方案，再动手制作。</li>
+    <li data-l="en">Measured deformation and locomotion on the bench with camera tracking.</li>
+    <li data-l="zh">在实验台上用相机追踪测量形变和运动。</li>
+  </ul>
+
+  <!-- ============ Bench test ============ -->
+  <h2><span data-l="en">Bench Test</span><span data-l="zh">实物测试</span></h2>
+  <figure class="demo"><video src="test.mp4" poster="test-poster.jpg" controls autoplay muted loop playsinline aria-label="Bench test of one actuator unit next to a ruler"></video>
+    <figcaption><span data-l="en">One actuator on the bench: the copper coil sits between two magnetic-sponge halves, with a steel ruler for scale.</span><span data-l="zh">实验台上的单个驱动单元：铜线圈夹在两块磁性海绵之间，旁边放钢尺作为参照。</span></figcaption></figure>
+
+  <!-- ============ Patent ============ -->
+  <h2><span data-l="en">Patent</span><span data-l="zh">专利</span></h2>
+  <div class="mods">
+    <div><code data-l="en">Title</code><code data-l="zh">名称</code><p data-l="en">A Peristaltic Pipeline Soft Robot Based on Electromagnetic Control (PRC utility model)</p><p data-l="zh">一种基于电磁控制的蠕动式管道软体机器人（实用新型）</p></div>
+    <div><code data-l="en">Number</code><code data-l="zh">编号</code><p data-l="en">Grant CN 220366121 U · Application 202321674507.6</p><p data-l="zh">授权公告号 CN 220366121 U · 申请号 202321674507.6</p></div>
+    <div><code data-l="en">Dates</code><code data-l="zh">日期</code><p data-l="en">Filed 29 Jun 2023 · Granted 19 Jan 2024</p><p data-l="zh">申请日 2023.06.29 · 授权公告日 2024.01.19</p></div>
+    <div><code data-l="en">Inventors</code><code data-l="zh">发明人</code><p data-l="en">Tang F., Zhang H., <b>Wang C.</b>, Cao J., Liu T., Li Z., Yang J.</p><p data-l="zh">唐福龙、张翰明、<b>王长宇</b>、曹嘉睿、刘天齐、李泽锋、杨家霁</p></div>
+    <div><code data-l="en">Holder</code><code data-l="zh">专利权人</code><p data-l="en">North China University of Technology</p><p data-l="zh">北方工业大学</p></div>
+  </div>
+
+  <!-- ============ Role ============ -->
+  <h2><span data-l="en">My Role</span><span data-l="zh">我的工作</span></h2>
+  <ul class="prose">
+    <li data-l="en">Led the 5-member team: set the technical route and split the work.</li>
+    <li data-l="zh">带领 5 人团队：确定技术路线，分配任务。</li>
+    <li data-l="en">Formulated the magnetic composites and built the compliant body.</li>
+    <li data-l="zh">配制磁性复合材料，制作柔性本体。</li>
+    <li data-l="en">Ran the COMSOL comparisons and the bench measurements.</li>
+    <li data-l="zh">完成 COMSOL 仿真对比和实验台测量。</li>
+  </ul>
+
+  <!-- ============ Limitations ============ -->
+  <h2><span data-l="en">Limitations</span><span data-l="zh">局限</span></h2>
+  <ul class="prose">
+    <li data-l="en">The bench video shows a single actuator unit. The multi-unit crawling sequence is shown as a simulation, with illustrative strokes and timing.</li>
+    <li data-l="zh">实物视频展示的是单个驱动单元；多单元蠕动过程用模拟动画展示，其中行程和时间仅作示意。</li>
+    <li data-l="en">The magnetic force model above is a simplified explanation of the principle, not a fitted model of the prototype.</li>
+    <li data-l="zh">上面的磁力公式是说明原理用的简化模型，不是根据样机数据拟合出来的。</li>
+  </ul>
+</article>
+
+<footer><span>© 2026 Changyu Wang</span><a href="../../">wangcy0928.github.io</a></footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  function setLang(l){root.lang=l==='zh'?'zh-CN':'en';try{localStorage.setItem('cw-lang',l)}catch(e){}
+    document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===l))})}
+  setLang(root.lang==='zh-CN'?'zh':'en');
+  document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.dataset.lang)})});
+  document.getElementById('theme').addEventListener('click',function(){
+    var cur=root.dataset.theme||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    root.dataset.theme=cur==='light'?'dark':'light';try{localStorage.setItem('cw-theme',root.dataset.theme)}catch(e){}
+  });
+})();
+</script>
+
+<script type="text/plain" id="struct-en">
+flowchart LR
+    W1["Walking unit 1<br/>legs ↕"] --- C1["Center body 1"] --- W2["Walking unit 2<br/>legs ↔"] --- C2["Center body 2"] --- W3["Walking unit 3<br/>legs ↕"] --- C3["Center body 3"] --- W4["Walking unit 4<br/>legs ↔"]
+</script>
+<script type="text/plain" id="struct-zh">
+flowchart LR
+    W1["行走单元 1<br/>腿 ↕"] --- C1["中心连接体 1"] --- W2["行走单元 2<br/>腿 ↔"] --- C2["中心连接体 2"] --- W3["行走单元 3<br/>腿 ↕"] --- C3["中心连接体 3"] --- W4["行走单元 4<br/>腿 ↔"]
+</script>
+<script type="text/plain" id="gait-en">
+flowchart TD
+    S["Start: all walking units grip the wall"] --> A
+    A["① Units 1 & 3 grip<br/>units 2 & 4 release"] --> B
+    B["② Center bodies change length<br/>→ units 2 & 4 move forward"] --> C
+    C["③ Units 2 & 4 extend legs and grip"] --> D
+    D["④ Units 1 & 3 retract legs and release"] --> E
+    E["⑤ Center bodies change length back<br/>→ units 1 & 3 move forward"] --> F
+    F["⑥ Units 1 & 3 extend legs and grip"] --> G{"Reached target?"}
+    G -- No --> A
+    G -- Yes --> H["Stop: all units grip the wall"]
+</script>
+<script type="text/plain" id="gait-zh">
+flowchart TD
+    S["开始：所有行走单元撑住管壁"] --> A
+    A["① 单元 1、3 撑住<br/>单元 2、4 松开"] --> B
+    B["② 中心连接体伸缩<br/>→ 单元 2、4 前移"] --> C
+    C["③ 单元 2、4 伸腿撑住"] --> D
+    D["④ 单元 1、3 收腿松开"] --> E
+    E["⑤ 中心连接体反向伸缩<br/>→ 单元 1、3 前移"] --> F
+    F["⑥ 单元 1、3 伸腿撑住"] --> G{"到达目标？"}
+    G -- 否 --> A
+    G -- 是 --> H["停止：所有单元撑住管壁"]
+</script>
+<script type="text/plain" id="act-en">
+flowchart LR
+    I["Set coil current I<br/>size and direction"] --> B["Coil field adds to<br/>magnet field"]
+    B --> F["Magnet attraction<br/>gets stronger or weaker"]
+    F --> K["Balance against spring<br/>and elastomer"]
+    K --> X["Unit contracts or extends"]
+    X --> L["Leg grips / releases<br/>or body changes length"]
+</script>
+<script type="text/plain" id="act-zh">
+flowchart LR
+    I["设定线圈电流 I<br/>（大小和方向）"] --> B["线圈磁场与<br/>永磁体磁场叠加"]
+    B --> F["永磁体间吸引力<br/>增强或减弱"]
+    F --> K["与弹簧、弹性体<br/>回弹力平衡"]
+    K --> X["单元收缩或伸长"]
+    X --> L["腿撑住 / 松开<br/>或连接体变长 / 变短"]
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:false,theme:"default",securityLevel:"strict",fontFamily:'"IBM Plex Sans","Noto Sans SC",sans-serif',flowchart:{nodeSpacing:40,rankSpacing:50,htmlLabels:true}});
+for(const box of document.querySelectorAll("[data-mermaid]")){
+  const id=box.dataset.mermaid;
+  try{const {svg}=await mermaid.render("m-"+id,document.getElementById(id).textContent);box.innerHTML=svg;}
+  catch(e){box.innerHTML='<p class="wait">'+(box.dataset.l==="zh"?"图表加载失败，请刷新页面。":"The diagram failed to load. Refresh the page to try again.")+'</p>';}
+}
+</script>
+</body>
+</html>

@@ -194,9 +194,9 @@ var CAT={robo:['Robotics & hardware','#0E7490'],ai:['AI-built','#1D4ED8'],biz:['
 
 var I={
  en:{title:'Changyu Wang · Personal Projects',tagline:'Robotics · Mechatronics · Mechanical Design · Product Design · Product Management',school:'M.S. Mechanical Engineering & Applied Mechanics, UPenn · graduating Jun 2027',contact:'Contact:',copy:'Copy',copied:'Copied',foot:'Open to full-time roles in the US and China.',
-   g:{robo:'Robotics & Hardware',data:'Research & Data'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗',details:'Details',github:'GitHub ↗',replay:'3D replay ↗'},
+   g:{robo:'Robotics & Hardware',data:'Research & Data'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗',details:'Details',github:'GitHub ↗',replay:'3D replay ↗',patent:'Patent ↗'},
  zh:{title:'王长宇 · 个人作品集',tagline:'机器人 · 机电一体化 · 机械设计 · 产品设计 · 产品管理',school:'宾夕法尼亚大学 机械工程与应用力学硕士 · 2027 年 6 月毕业',contact:'联系：',copy:'复制',copied:'已复制',foot:'正在寻找中美两地的全职机会。',
-   g:{robo:'机器人与硬件',data:'科研与数据'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗',details:'项目详情',github:'GitHub ↗',replay:'3D 回放 ↗'}
+   g:{robo:'机器人与硬件',data:'科研与数据'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗',details:'项目详情',github:'GitHub ↗',replay:'3D 回放 ↗',patent:'专利 ↗'}
 };
 var P=[
 {id:'stir',g:'robo',year:'2026',split:[{v:'posts/stir/mixing-tall.mp4',p:'posts/stir/mixing-tall-poster.jpg',l:{en:'Simulation',zh:'仿真'}},{v:'posts/stir/demo.mp4',p:'posts/stir/demo-poster.jpg',l:{en:'Real robot',zh:'真机'}}],poster:'posts/stir/demo-thumb.jpg',
@@ -207,11 +207,12 @@ var P=[
  m:'tool sag 15–20 mm → <2 mm · 100 Hz · 0 spills',
  b:{en:['A 100 Hz closed-loop Cartesian controller: forward kinematics, pose-error feedback, and a Jacobian pseudo-inverse velocity solve that tracks an elliptical stir path with orientation locked.','Null-space projection re-centers the joints, so the arm does not drift over repeated cycles.','Z-axis integral compensation cut end-effector sag under a 200 g payload from 15–20 mm to under 2 mm. Velocity limits and a low-pass filter removed the resonance of the earlier playback approach.','Programmed trajectory commands and live visualization in ROS/RViz. Result: zero spills across the full demo day.','Afterwards I rebuilt the controller from scratch as an open simulation. Integrating the command from its own state cut xy tracking error from 13.7 mm to 0.7 mm against the course version.'],
     zh:['100 Hz 闭环笛卡尔空间控制器：正运动学 + 位姿误差反馈 + 雅可比伪逆速度求解，在锁定姿态的前提下跟踪椭圆搅拌轨迹。','零空间投影让关节回到中位，多次循环不漂移。','Z 轴积分补偿把 200 g 负载下的末端下沉量从 15–20 mm 压到 2 mm 以内；速度限幅加低通滤波消除了原先离线回放方案的机械共振。','用 ROS/RViz 编写轨迹指令与实时可视化。结果：演示日全天零洒漏。','之后我从零把控制器重写成开源仿真：改为从上一次指令积分后，水平跟踪误差从课程版的 13.7 mm 降到 0.7 mm。']}},
-{id:'soft',g:'robo',year:'2023–24',split:[{v:'posts/soft/sim.mp4',p:'posts/soft/sim-poster.jpg',a:{en:'Crawling simulation',zh:'蠕动模拟'}},{v:'posts/soft/test.mp4',p:'posts/soft/test-poster.jpg',l:{en:'Bench test',zh:'实物测试'}}],stack:true,poster:'posts/soft/test-poster.jpg',tags:['Soft robotics','Smart materials','COMSOL','Team lead'],
+{id:'soft',g:'robo',year:'2023–24',links:[{k:'details',u:'posts/soft/'},{k:'patent',u:'https://patents.google.com/patent/CN220366121U/en'}],
+ split:[{v:'posts/soft/sim.mp4',p:'posts/soft/sim-poster.jpg',a:{en:'Crawling simulation',zh:'蠕动模拟'}},{v:'posts/soft/test.mp4',p:'posts/soft/test-poster.jpg',l:{en:'Bench test',zh:'实物测试'}}],stack:true,poster:'posts/soft/test-poster.jpg',tags:['Soft robotics','Smart materials','COMSOL','Team lead'],
  t:{en:'Magnetic Soft Robot for Pipe Inspection',zh:'磁控管道检测软体机器人'},
  s:{en:'Led a 5-person team building a soft robot that an electromagnetic field drives through pipe.',zh:'带领 5 人团队研制由电磁场驱动、可在管道内蠕动前进的软体机器人。'},
  o:{en:'NCUT & BJTU Joint Lab · Mar 2023 – Jun 2024 · Project leader, 5-member team · Advisor: Dr. Hanming Zhang',zh:'北方工业大学 × 北京交通大学联合实验室 · 2023.03–2024.06 · 5 人团队项目负责人 · 指导老师：Hanming Zhang 博士'},
- m:'PRC utility patent ZL 2023 2 1674507.6',
+ m:'PRC utility patent CN 220366121 U',
  b:{en:['Set the technical route and split the work across the team.','Formulated magnetorheological-fluid and magnetic-sponge composites, and built the compliant body that deforms under the field.','Measured deformation and locomotion with camera tracking, and compared reinforcement designs in COMSOL FEA before going back to the bench.'],
     zh:['确定技术路线并组织团队分工。','配制磁流变液与磁性海绵复合材料，搭建在磁场下产生形变的柔性执行结构。','用相机追踪法测量形变与运动轨迹，并先用 COMSOL 有限元仿真比较加固方案，再回到实验台验证。']},
  cite:'Patent: Tang F., Zhang H., <b>Wang C.</b>, et al. <i>A Peristaltic Pipeline Soft Robot Based on Electromagnetic Control.</i>'},
