@@ -103,6 +103,10 @@ h1,h2,h3{line-height:1.12;text-wrap:balance}
 .pmedia.split .real video{object-fit:contain}
 .vlabel{position:absolute;left:10px;bottom:10px;padding:3px 9px;border-radius:4px;background:rgba(12,14,13,.72);color:#f2f5f3;font:600 12px var(--mono);letter-spacing:.04em}
 @media (max-width:980px){.pmedia.split{aspect-ratio:7/6;min-height:0}}
+.pmedia.split.stack{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
+.pmedia.split.stack .half{min-height:200px}
+.pmedia.split.stack .sim{background:#e8edf2}
+@media (max-width:980px){.pmedia.split.stack{aspect-ratio:8/9}}
 .pmedia.photo.real{background:#0c0e0d}
 .pmedia.photo.real video{position:absolute;inset:0}
 .pmedia.photo.real{position:relative}
@@ -203,7 +207,7 @@ var P=[
  m:'tool sag 15–20 mm → <2 mm · 100 Hz · 0 spills',
  b:{en:['A 100 Hz closed-loop Cartesian controller: forward kinematics, pose-error feedback, and a Jacobian pseudo-inverse velocity solve that tracks an elliptical stir path with orientation locked.','Null-space projection re-centers the joints, so the arm does not drift over repeated cycles.','Z-axis integral compensation cut end-effector sag under a 200 g payload from 15–20 mm to under 2 mm. Velocity limits and a low-pass filter removed the resonance of the earlier playback approach.','Programmed trajectory commands and live visualization in ROS/RViz. Result: zero spills across the full demo day.','Afterwards I rebuilt the controller from scratch as an open simulation. Integrating the command from its own state cut xy tracking error from 13.7 mm to 0.7 mm against the course version.'],
     zh:['100 Hz 闭环笛卡尔空间控制器：正运动学 + 位姿误差反馈 + 雅可比伪逆速度求解，在锁定姿态的前提下跟踪椭圆搅拌轨迹。','零空间投影让关节回到中位，多次循环不漂移。','Z 轴积分补偿把 200 g 负载下的末端下沉量从 15–20 mm 压到 2 mm 以内；速度限幅加低通滤波消除了原先离线回放方案的机械共振。','用 ROS/RViz 编写轨迹指令与实时可视化。结果：演示日全天零洒漏。','之后我从零把控制器重写成开源仿真：改为从上一次指令积分后，水平跟踪误差从课程版的 13.7 mm 降到 0.7 mm。']}},
-{id:'soft',g:'robo',year:'2023–24',vid:'posts/soft/test.mp4',poster:'posts/soft/test-poster.jpg',real:true,tags:['Soft robotics','Smart materials','COMSOL','Team lead'],
+{id:'soft',g:'robo',year:'2023–24',split:[{v:'posts/soft/sim.mp4',p:'posts/soft/sim-poster.jpg',a:{en:'Crawling simulation',zh:'蠕动模拟'}},{v:'posts/soft/test.mp4',p:'posts/soft/test-poster.jpg',l:{en:'Bench test',zh:'实物测试'}}],stack:true,poster:'posts/soft/test-poster.jpg',tags:['Soft robotics','Smart materials','COMSOL','Team lead'],
  t:{en:'Magnetic Soft Robot for Pipe Inspection',zh:'磁控管道检测软体机器人'},
  s:{en:'Led a 5-person team building a soft robot that an electromagnetic field drives through pipe.',zh:'带领 5 人团队研制由电磁场驱动、可在管道内蠕动前进的软体机器人。'},
  o:{en:'NCUT & BJTU Joint Lab · Mar 2023 – Jun 2024 · Project leader, 5-member team · Advisor: Dr. Hanming Zhang',zh:'北方工业大学 × 北京交通大学联合实验室 · 2023.03–2024.06 · 5 人团队项目负责人 · 指导老师：Hanming Zhang 博士'},
@@ -234,7 +238,7 @@ function x(f){return typeof f==='string'?f:(f[lang]||f.en)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 var GROUPS=['robo','data'];
 function thumbHtml(p){return p.poster?'<div class="thumb photo" aria-hidden="true"><img src="'+p.poster+'" alt=""></div>':'<div class="thumb" aria-hidden="true">'+SVG[p.id]+'</div>'}
-function mediaHtml(p){if(p.split)return '<div class="pmedia split">'+p.split.map(function(s,i){return '<div class="half'+(i?' real':' sim')+'"><video src="'+s.v+'" poster="'+s.p+'" autoplay muted loop playsinline aria-label="'+x(s.l)+'"></video><span class="vlabel">'+x(s.l)+'</span></div>'}).join('')+'</div>';return p.vid?'<div class="pmedia photo'+(p.real?' real':'')+'"><video src="'+p.vid+'" poster="'+p.poster+'" autoplay muted loop playsinline aria-label="'+x(p.t)+'"></video></div>':'<div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div>'}
+function mediaHtml(p){if(p.split)return '<div class="pmedia split'+(p.stack?' stack':'')+'">'+p.split.map(function(s,i){return '<div class="half'+(i?' real':' sim')+'"><video src="'+s.v+'" poster="'+s.p+'" autoplay muted loop playsinline aria-label="'+x(s.l||s.a)+'"></video>'+(s.l?'<span class="vlabel">'+x(s.l)+'</span>':'')+'</div>'}).join('')+'</div>';return p.vid?'<div class="pmedia photo'+(p.real?' real':'')+'"><video src="'+p.vid+'" poster="'+p.poster+'" autoplay muted loop playsinline aria-label="'+x(p.t)+'"></video></div>':'<div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div>'}
 
 function render(){
   var L=I[lang];
