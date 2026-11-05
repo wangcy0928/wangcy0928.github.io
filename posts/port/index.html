@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yangtze Berth Atlas | Changyu Wang</title>
+<meta name="description" content="Scraping, cleaning and mapping 1,828 berths along the Yangtze River (Chongqing → Shanghai), with a nautical/satellite map and WGS-84 → GCJ-02 coordinate correction.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#f7f8fa; --panel:#ffffff; --ink:#1b2430; --muted:#5d6b7a; --line:#e2e6eb;
+  --accent:#006fa8; --dry:#d9822b; --tank:#2b7bd9; --both:#7a5bd1; --warn:#b4472b;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161c; --panel:#18202a; --ink:#e6ebf0; --muted:#94a3b3; --line:#2a3542;
+    --accent:#2aa3dc; --dry:#f0a050; --tank:#5aa2f0; --both:#a58cf0; --warn:#f07a5a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161c; --panel:#18202a; --ink:#e6ebf0; --muted:#94a3b3; --line:#2a3542;
+  --accent:#2aa3dc; --dry:#f0a050; --tank:#5aa2f0; --both:#a58cf0; --warn:#f07a5a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+header{padding:48px 0 24px}
+.kicker{color:var(--accent);font-weight:600;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:8px 0 12px}
+h2{font-size:22px;margin:48px 0 12px}
+p{margin:0 0 12px} .muted{color:var(--muted)}
+a{color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0 8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:13px}
+
+.mapbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--ink);padding:7px 12px;font:inherit;font-size:14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.toggle{display:inline-flex;gap:6px;align-items:center;font-size:14px;margin-left:auto;cursor:pointer;user-select:none}
+.toggle input{width:16px;height:16px;accent-color:var(--accent)}
+.toggle[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+#map{height:min(70vh,620px);background:#cfd8df}
+.banner{display:none;padding:8px 12px;font-size:14px;background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--warn);border-bottom:1px solid var(--line)}
+.banner.on{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;padding:10px 12px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.portlist{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-top:1px solid var(--line);scrollbar-width:thin}
+.portlist button{flex:0 0 auto;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:4px 10px;font:inherit;font-size:13px;cursor:pointer}
+.portlist button.s{border-color:var(--accent);color:var(--accent)}
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.step h3{margin:0 0 6px;font-size:16px}
+.step p{font-size:14px;color:var(--muted);margin:0}
+.step .n{color:var(--accent);font-weight:700;font-size:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+svg text{fill:var(--ink);font-size:12px}
+code{background:color-mix(in srgb,var(--accent) 10%,transparent);padding:1px 5px;border-radius:4px;font-size:.92em}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tags span{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:3px 10px;font-size:13px}
+footer{padding:48px 0;color:var(--muted);font-size:13px}
+
+.leaflet-popup-content{font-size:13px;line-height:1.5;margin:10px 12px}
+.leaflet-popup-content h4{margin:0 0 4px;font-size:14px}
+.bar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:6px 0;background:#ddd}
+.pk{color:#667;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a href="../../#port" style="font-size:14px;text-decoration:none">← Changyu Wang</a>
+  <div class="kicker">Data engineering · GIS · Internship project</div>
+  <h1>Yangtze Berth Atlas</h1>
+  <p class="muted">I built a scraper that collected every berth listed on a shipping-data platform along the Yangtze River from Chongqing to Shanghai. I then cleaned the data into a single table and made a map tool that switches between a nautical chart and satellite imagery, so each berth's type can be checked by eye. The hardest bug was markers that drifted hundreds of metres whenever the base map changed. The cause turned out to be China's GCJ-02 coordinate offset.</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<section class="mapbox" aria-label="Interactive berth map">
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="Base map">
+      <button data-base="chart" aria-pressed="true">Nautical chart</button>
+      <button data-base="esri" aria-pressed="false">Satellite (WGS-84)</button>
+      <button data-base="amap" aria-pressed="false">Satellite (China, GCJ-02)</button>
+    </div>
+    <label class="toggle" id="fixwrap" aria-disabled="true" title="Only relevant on the China satellite layer">
+      <input type="checkbox" id="fix" checked disabled> Coordinate correction
+    </label>
+  </div>
+  <div class="banner" id="banner">Correction is off. On this layer every marker is now drawn about 300–600 m away from its true position. This is the drift bug.</div>
+  <div id="map"></div>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--dry)"></i>Dry cargo</span>
+    <span><i class="dot" style="background:var(--tank)"></i>Tanker</span>
+    <span><i class="dot" style="background:var(--both)"></i>Both</span>
+    <span>Large circles are ports, sized by berth count. Small dots are sample berths; zoom in to see them.</span>
+  </div>
+  <div class="portlist" id="portlist" aria-label="Jump to port"></div>
+</section>
+<p class="muted" style="font-size:13px;margin-top:8px">Data note: the 35 ports are shown as aggregate counts. Berth-level points are a sample of 30 berths from each of six ports (highlighted), with a reduced set of fields.</p>
+
+<h2>How it works</h2>
+<div class="steps">
+  <div class="step"><div class="n">01 · Discover</div><h3>Reverse-engineer the API</h3><p>Captured the map app's XHR traffic and found the region and berth endpoints. With an authorised account, the request headers are derived from the session JWT, so only one credential needs to be configured.</p></div>
+  <div class="step"><div class="n">02 · Locate</div><h3>Find Yangtze ports</h3><p>Queried six overlapping rectangles, since one big box timed out. Ports were then filtered by haversine distance (≤ 30 km) to a 70-point polyline of the main channel.</p></div>
+  <div class="step"><div class="n">03 · Collect</div><h3>Resumable scraping</h3><p>Each port's berths are cached to their own file with atomic writes. Timeouts and expired tokens just mean re-running the command: only the missing ports get fetched.</p></div>
+  <div class="step"><div class="n">04 · Deliver</div><h3>Clean + export</h3><p>1,828 berths × 95 raw fields go into one bilingual Excel workbook, with fill-rate stats per field and an option to drop the ~55 always-empty columns.</p></div>
+</div>
+
+<h2>The drifting-marker bug</h2>
+<div class="two">
+  <div>
+    <p>The berth coordinates and the nautical chart both use <b>WGS-84</b>, the raw GPS system. Satellite maps served inside China use <b>GCJ-02</b>, a system that by regulation shifts every point by a non-linear offset. Along the Yangtze that offset is about 300–600 m, and its size changes from place to place.</p>
+    <p>So the same latitude/longitude lands in a different spot on each base map. Switching layers made every marker jump.</p>
+    <p><b>Fix:</b> store everything in WGS-84 as the single source of truth. When the active layer is GCJ-02, run each point through the published WGS-84 → GCJ-02 transform before drawing it. The transform is a polynomial plus sine terms, converted from metres to degrees with the Krasovsky ellipsoid. Re-project from the original coordinates every time, never from the previous output, so errors don't pile up.</p>
+    <p class="muted">Try it: switch to <i>Satellite (China, GCJ-02)</i>, zoom in on a port, and untick <i>Coordinate correction</i>. Click any berth to see the size of the offset at that exact spot.</p>
+  </div>
+  <div class="card" aria-label="Diagram: one coordinate drawn on two map systems">
+    <svg viewBox="0 0 420 230" width="100%" role="img" aria-labelledby="dgT">
+      <title id="dgT">The same coordinate drawn on a WGS-84 map and a GCJ-02 map lands in different places; applying the transform realigns it</title>
+      <rect x="10" y="20" width="185" height="150" rx="8" fill="none" stroke="var(--line)" stroke-width="2"/>
+      <rect x="225" y="20" width="185" height="150" rx="8" fill="none" stroke="var(--line)" stroke-width="2"/>
+      <text x="102" y="14" text-anchor="middle">Nautical chart (WGS-84)</text>
+      <text x="317" y="14" text-anchor="middle">China satellite (GCJ-02)</text>
+      <path d="M20 120 C70 90 120 130 185 100" stroke="var(--tank)" stroke-width="10" fill="none" opacity=".35"/>
+      <path d="M235 120 C285 90 335 130 400 100" stroke="var(--tank)" stroke-width="10" fill="none" opacity=".35"/>
+      <circle cx="102" cy="108" r="7" fill="var(--dry)"/>
+      <text x="102" y="140" text-anchor="middle">berth ✓</text>
+      <circle cx="345" cy="74" r="7" fill="none" stroke="var(--warn)" stroke-width="2" stroke-dasharray="3 2"/>
+      <text x="352" y="62" fill="var(--warn)" style="fill:var(--warn)">raw: off by ~500 m</text>
+      <circle cx="317" cy="108" r="7" fill="var(--dry)"/>
+      <text x="317" y="140" text-anchor="middle">after transform ✓</text>
+      <line x1="339" y1="79" x2="322" y2="102" stroke="var(--warn)" stroke-width="1.5" marker-end="url(#ar)"/>
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--warn)"/></marker></defs>
+      <text x="210" y="200" text-anchor="middle" style="fill:var(--muted)">one stored coordinate → transformed per base map</text>
+    </svg>
+  </div>
+</div>
+
+<h2>Stack</h2>
+<div class="tags">
+  <span>Python</span><span>curl_cffi</span><span>openpyxl</span><span>pytest</span>
+  <span>JavaScript</span><span>Leaflet</span><span>OpenSeaMap</span><span>Haversine / geodesy</span><span>WGS-84 ↔ GCJ-02</span>
+</div>
+
+<footer>Map data © OpenStreetMap contributors, OpenSeaMap; imagery © Esri, © AutoNavi. Berth points are a sample of the project dataset, shown for demonstration.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="data.js"></script>
+<script>
+(function(){
+  const D = window.YZ_DATA;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const fmt = n => n.toLocaleString('en-US');
+
+  // ── stats
+  const s = D.total;
+  document.getElementById('stats').innerHTML = [
+    [fmt(s.berths),'berths collected'],[s.ports,'ports with berths'],
+    ['~1,600 km','Chongqing → Shanghai'],[s.fields,'raw fields per berth']
+  ].map(([b,t])=>`<div class="stat"><b>${b}</b><span>${t}</span></div>`).join('');
+
+  // ── WGS-84 → GCJ-02
+  const PI=Math.PI, A=6378245.0, EE=0.00669342162296594323;
+  function tLat(x,y){let r=-100+2*x+3*y+.2*y*y+.1*x*y+.2*Math.sqrt(Math.abs(x));
+    r+=(20*Math.sin(6*x*PI)+20*Math.sin(2*x*PI))*2/3; r+=(20*Math.sin(y*PI)+40*Math.sin(y/3*PI))*2/3;
+    r+=(160*Math.sin(y/12*PI)+320*Math.sin(y*PI/30))*2/3; return r;}
+  function tLng(x,y){let r=300+x+2*y+.1*x*x+.1*x*y+.1*Math.sqrt(Math.abs(x));
+    r+=(20*Math.sin(6*x*PI)+20*Math.sin(2*x*PI))*2/3; r+=(20*Math.sin(x*PI)+40*Math.sin(x/3*PI))*2/3;
+    r+=(150*Math.sin(x/12*PI)+300*Math.sin(x/30*PI))*2/3; return r;}
+  function toGcj(lat,lng){
+    if(lng<72.004||lng>137.8347||lat<0.8293||lat>55.8271) return [lat,lng];
+    let dLat=tLat(lng-105,lat-35), dLng=tLng(lng-105,lat-35);
+    const rad=lat/180*PI, m=1-EE*Math.sin(rad)**2, sq=Math.sqrt(m);
+    dLat=(dLat*180)/((A*(1-EE))/(m*sq)*PI); dLng=(dLng*180)/(A/sq*Math.cos(rad)*PI);
+    return [lat+dLat,lng+dLng];
+  }
+  function metres(a,b){const R=6371000,r=x=>x*PI/180,dl=r(b[0]-a[0]),dn=r(b[1]-a[1]);
+    const h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dn/2)**2; return 2*R*Math.asin(Math.sqrt(h));}
+
+  // ── map + layers
+  const map = L.map('map',{zoomControl:true,preferCanvas:true,worldCopyJump:false}).setView([30.6,114.0],6);
+  const bases = {
+    chart: L.layerGroup([
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,subdomains:'abc',attribution:'© OpenStreetMap'}),
+      L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenSeaMap'})
+    ]),
+    esri: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'© Esri'}),
+    amap: L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',{maxZoom:18,subdomains:'1234',attribution:'© AutoNavi'})
+  };
+  const CRS = {chart:'WGS84', esri:'WGS84', amap:'GCJ02'};
+  let current='chart'; bases.chart.addTo(map);
+
+  const colorOf = ft => ft==='Tanker'?css('--tank'):ft==='Both'?css('--both'):css('--dry');
+  const sampled = new Set(D.sample.map(b=>b.p));
+  const portByCode = Object.fromEntries(D.ports.map(p=>[p.c,p]));
+
+  // markers keep their true WGS-84 position in .wgs; draw position is derived
+  const portLayer = L.layerGroup().addTo(map), berthLayer = L.layerGroup();
+  const all = [];
+  D.ports.forEach(p=>{
+    const m = L.circleMarker([p.lat,p.lon],{radius:5+Math.sqrt(p.n)*1.1,weight:sampled.has(p.c)?2.5:1.2,
+      color:sampled.has(p.c)?css('--accent'):'#fff',fillColor:colorOf(p.tank>p.dry?'Tanker':'Dry Cargo'),fillOpacity:.75});
+    m.wgs=[p.lat,p.lon];
+    const t=p.dry+p.tank+p.both;
+    m.bindPopup(()=>`<h4>${p.cn} · ${p.en}</h4><span class="pk">${p.c}</span><br>${p.n} berths
+      <div class="bar"><i style="width:${p.dry/t*100}%;background:${css('--dry')}"></i><i style="width:${p.tank/t*100}%;background:${css('--tank')}"></i><i style="width:${p.both/t*100}%;background:${css('--both')}"></i></div>
+      Dry cargo ${p.dry} · Tanker ${p.tank}${p.both?` · Both ${p.both}`:''}${sampled.has(p.c)?'<br><i>Zoom in for sample berths</i>':''}`);
+    portLayer.addLayer(m); all.push(m);
+  });
+  D.sample.forEach(b=>{
+    const m = L.circleMarker([b.lat,b.lon],{radius:5,weight:1,color:'#fff',fillColor:colorOf(b.ft),fillOpacity:.95});
+    m.wgs=[b.lat,b.lon];
+    m.bindPopup(()=>{
+      const g=toGcj(b.lat,b.lon), off=Math.round(metres(m.wgs,g)), port=portByCode[b.p];
+      return `<h4>Berth ${b.name}</h4><span class="pk">${port.cn} · ${port.en}</span><br>
+        ${b.ft}${b.bt?` · ${b.bt}`:''}<br>
+        ${b.len?`Length ${b.len} m<br>`:''}${b.dwt?`Max DWT ${fmt(b.dwt)} t<br>`:''}
+        <span class="pk">WGS-84 ${b.lat.toFixed(5)}, ${b.lon.toFixed(5)}<br>GCJ-02 offset here: <b>${off} m</b></span>`;
+    });
+    berthLayer.addLayer(m); all.push(m);
+  });
+
+  const fixBox=document.getElementById('fix'), fixWrap=document.getElementById('fixwrap'), banner=document.getElementById('banner');
+  function reproject(){
+    const needGcj = CRS[current]==='GCJ02' && fixBox.checked;
+    all.forEach(m=>m.setLatLng(needGcj ? toGcj(m.wgs[0],m.wgs[1]) : m.wgs)); // always from the original
+    banner.classList.toggle('on', CRS[current]==='GCJ02' && !fixBox.checked);
+  }
+  function setBase(k){
+    map.removeLayer(bases[current]); current=k; bases[k].addTo(map);
+    document.querySelectorAll('[data-base]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.base===k));
+    const gcj=CRS[k]==='GCJ02'; fixBox.disabled=!gcj; fixWrap.setAttribute('aria-disabled',!gcj);
+    reproject();
+  }
+  document.querySelectorAll('[data-base]').forEach(b=>b.addEventListener('click',()=>setBase(b.dataset.base)));
+  fixBox.addEventListener('change',reproject);
+
+  function zoomRule(){ map.getZoom()>=11 ? map.addLayer(berthLayer) : map.removeLayer(berthLayer); }
+  map.on('zoomend',zoomRule);
+
+  // port jump list
+  const pl=document.getElementById('portlist');
+  D.ports.forEach(p=>{
+    const b=document.createElement('button'); b.textContent=`${p.cn} ${p.n}`; if(sampled.has(p.c)) b.className='s';
+    b.title=p.en; b.onclick=()=>{ const ll=CRS[current]==='GCJ02'&&fixBox.checked?toGcj(p.lat,p.lon):[p.lat,p.lon];
+      map.flyTo(ll, sampled.has(p.c)?13:11, {duration:1}); };
+    pl.appendChild(b);
+  });
+})();
+</script>
+</body>
+</html>
