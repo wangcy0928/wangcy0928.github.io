@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Robot-Assisted Ultrasonic Testing | Changyu Wang</title>
+<meta name="description" content="A 6-DOF robot and turntable system for automated immersion ultrasonic testing of complex revolved parts such as wheel hubs. Co-authored paper, J. Phys.: Conf. Ser. 2679 (2024).">
+<script>
+try{var t=localStorage.getItem('cw-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+try{if(localStorage.getItem('cw-lang')==='zh')document.documentElement.lang='zh-CN'}catch(e){}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#101312; --top:#1a1d1c; --surface:#171a19; --surface-2:#212524;
+  --text:#ecefed; --muted:#b4bdb9; --soft:#828c88; --line:#2f3533;
+  --accent:#2aa3dc; --accent-warm:#f0906a; --go:#17864f; --go-line:#2fbf74; --go-hi:#20a863;
+  --good:#3fcf8e;
+  --sans:"IBM Plex Sans","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c; --good:#13804f;
+}}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c; --good:#13804f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;padding-top:env(safe-area-inset-top,0px);background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16.5px;line-height:1.65}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-warm)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3,p{margin:0;overflow-wrap:anywhere}
+h1,h2,h3{line-height:1.15;text-wrap:balance}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:1px 6px;border-radius:4px}
+
+html[lang="en"] [data-l="zh"],html[lang="zh-CN"] [data-l="en"]{display:none!important}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:11;background:var(--bg)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text);font-weight:700}
+.brand b{display:grid;place-items:center;width:34px;height:34px;background:var(--text);color:var(--bg);font-size:14px}
+.acts{display:flex;align-items:center;gap:10px}
+.lang{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden}
+.lang button{min-width:46px;height:32px;border:0;background:transparent;color:var(--accent);cursor:pointer;font:700 14px var(--sans)}
+.lang button+button{border-left:1px solid var(--accent)}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.theme{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;font-size:16px}
+
+article{width:min(980px,100%);margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+.back{font-weight:700;font-size:15px}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+h1{font-size:clamp(30px,4.4vw,48px);font-weight:700;letter-spacing:-.01em}
+.lede{font-size:clamp(17px,1.9vw,20px);color:var(--muted);max-width:66ch}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btns a{display:inline-flex;align-items:center;min-height:40px;padding:8px 16px;border:1px solid var(--go-line);border-radius:4px;background:var(--go);color:#f4fff8;font-weight:700;font-size:15px}
+.btns a:hover{background:var(--go-hi);color:#fff}
+.btns a.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btns a.ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+h2{font-size:clamp(23px,2.6vw,30px);margin-top:26px}
+h3{font-size:19px;margin-top:6px}
+.prose{display:grid;gap:12px;color:var(--muted);max-width:70ch}
+.prose b{color:var(--text);font-weight:600}
+ul.prose{margin:0;padding-left:1.2em}
+p.prose{display:block}
+ul.prose li::marker{color:var(--accent)}
+
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.facts div{background:var(--surface);padding:14px 16px;display:grid;gap:2px;min-width:0}
+.facts span{font-size:12.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+.facts b{font-size:15px;font-weight:600}
+@media (max-width:720px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+figure{margin:0;border:1px solid var(--line);background:var(--surface)}
+figure img,figure video{display:block;width:100%;height:auto}
+figure.plot img,figure.plot video{background:#fff}
+figure.demo{background:#0c0e0d}
+figure.demo video{max-height:min(78vh,720px);width:auto;max-width:100%;margin:0 auto}
+figcaption{padding:10px 14px;color:var(--soft);font-size:14px}
+.viewer{border:1px solid var(--line);background:var(--surface)}
+.viewer iframe{display:block;width:100%;height:900px;border:0;background:var(--surface)}
+.viewer .vnote{padding:10px 14px;color:var(--soft);font-size:14px;border-top:1px solid var(--line)}
+.placeholder{display:grid;place-items:center;min-height:220px;padding:24px;text-align:center;color:var(--soft);border:1px dashed var(--line);background:var(--surface);font-size:15px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:600;background:var(--surface-2)}
+td{color:var(--muted);background:var(--surface)}
+td.n{font-family:var(--mono);font-size:14px;text-align:right}
+th.n{text-align:right}
+tr.best td{color:var(--text);font-weight:600}
+tr.best td.n{color:var(--good)}
+tr:last-child td{border-bottom:0}
+.small{font-size:14px;color:var(--soft)}
+
+pre.flow{margin:0;overflow-x:auto;padding:18px 20px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:14px/1.55 var(--mono)}
+.diagram{border:1px solid var(--line);background:#fff;padding:20px;overflow-x:auto;min-height:120px}
+.diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.diagram .wait{color:#69736e;font-size:14px;text-align:center}
+.math{overflow-x:auto;padding:14px 18px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.mods{display:grid;gap:0;border:1px solid var(--line)}
+.mods div{display:grid;grid-template-columns:200px minmax(0,1fr);gap:4px 18px;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface)}
+.mods div:first-child{border-top:0}
+.mods code{justify-self:start}
+.mods p{color:var(--muted);font-size:15px}
+@media (max-width:640px){.mods div{grid-template-columns:1fr}}
+.figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.figs figure img{background:#fff;padding:14px;aspect-ratio:3/2;object-fit:contain}
+@media (max-width:700px){.figs{grid-template-columns:1fr}}
+.mods div > code{align-self:start}
+
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;border-top:1px solid var(--line);color:var(--soft);font-size:14px;
+  padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},chtml:{displayAlign:'left'}};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="../../"><b>CW</b>Changyu Wang</a>
+  <div class="acts">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-en" data-lang="en">EN</button>
+      <button type="button" id="lang-zh" data-lang="zh">中文</button>
+    </div>
+    <button class="theme" type="button" id="theme" aria-label="Toggle light and dark mode">◐</button>
+  </div>
+</header>
+
+<article>
+  <a class="back" href="../../#ut"><span data-l="en">← All projects</span><span data-l="zh">← 全部项目</span></a>
+  <p class="eyebrow">2023–24 · North China University of Technology</p>
+  <h1><span data-l="en">Robot-Assisted Ultrasonic Testing of Complex Revolved Workpieces</span><span data-l="zh">机器人辅助复杂回转体超声检测</span></h1>
+  <div class="btns">
+    <a href="https://doi.org/10.1088/1742-6596/2679/1/012006" target="_blank" rel="noopener"><span data-l="en">Paper DOI ↗</span><span data-l="zh">论文 DOI ↗</span></a>
+    <a class="ghost" href="wheel_hub.step" download><span data-l="en">Hub model (.step)</span><span data-l="zh">轮毂模型 (.step)</span></a>
+  </div>
+
+  <figure class="plot"><img src="cscan.jpg" alt="C-scan image of the wheel hub showing four flat-bottom holes" loading="lazy">
+    <figcaption><span data-l="en">C-scan of the wheel hub. (a) The four 0.8 mm flat-bottom holes show up inside the yellow box. (b) Close-up at 10 MHz (left) and 15 MHz (right).</span><span data-l="zh">轮毂 C 扫描图。(a) 黄框内为 4 个 0.8 mm 平底孔；(b) 局部放大，左为 10 MHz 探头，右为 15 MHz 探头。</span></figcaption></figure>
+
+  <div class="facts">
+    <div><span data-l="en">Role</span><span data-l="zh">角色</span><b data-l="en">Co-author (4th of 8)</b><b data-l="zh">合作作者（第 4 / 8）</b></div>
+    <div><span data-l="en">My part</span><span data-l="zh">负责部分</span><b data-l="en">SolidWorks drawings, testing</b><b data-l="zh">SolidWorks 绘图、实验测试</b></div>
+    <div><span data-l="en">Venue</span><span data-l="zh">发表</span><b>J. Phys.: Conf. Ser. 2679</b></div>
+    <div><span data-l="en">Result</span><span data-l="zh">结果</span><b data-l="en">0.8 mm defects detected</b><b data-l="zh">检出 0.8 mm 缺陷</b></div>
+  </div>
+
+  <h2><span data-l="en">Problem</span><span data-l="zh">问题</span></h2>
+  <p class="prose" data-l="en">Wheel hubs, turbine disks and similar revolved parts can develop internal cracks from casting defects or long-term loading. Existing ultrasonic rigs mostly handle shafts and pipes with near-constant diameter, so hubs with curved, stepped profiles were still tested by hand, slowly and inconsistently.</p>
+  <p class="prose" data-l="zh">轮毂、涡轮盘这类回转件可能因铸造缺陷或长期载荷产生内部裂纹。现有超声检测设备主要针对直径变化不大的轴类和管件，曲面、台阶复杂的轮毂大多还靠人工检测，效率低，结果也不稳定。</p>
+
+  <h2><span data-l="en">System</span><span data-l="zh">系统组成</span></h2>
+  <p class="prose" data-l="en">A 6-DOF robot holds the transducer and follows the part's profile in a water tank, while a turntable spins the part. The turntable extends the robot's reach, so the system can scan around the full part without singular poses or collisions. A digital flaw detector, the robot controller and the turntable servo all report to one industrial PC that runs the scan and stores the data.</p>
+  <p class="prose" data-l="zh">六轴机器人夹持超声探头，在水箱中沿工件母线运动，转台同时带动工件旋转。转台相当于一个外部扩展轴，弥补了机器人的奇异位形和干涉限制，能扫查整个工件。数字探伤仪、机器人控制器和转台伺服都接到一台工控机上，由它统一控制扫查并记录数据。</p>
+  <figure class="plot"><img src="system.jpg" alt="Diagram of the testing system: computer, pulse transceiver, robot controller, servo controller, robot, tank and turntable" loading="lazy">
+    <figcaption><span data-l="en">System configuration (paper fig. 1).</span><span data-l="zh">系统构成（论文图 1）。</span></figcaption></figure>
+  <div class="figs">
+    <figure class="plot"><img src="chuck.jpg" alt="Turntable with three-jaw chuck, labelled jaw, bevel gears, sliding block and lead screw" loading="lazy"><figcaption><span data-l="en">Turntable and three-jaw chuck: one bevel gear turns three lead screws so the jaws close together and center the part.</span><span data-l="zh">转台与三爪卡盘：转动一个锥齿轮即可带动三根丝杠，三爪同步移动，实现工件定心。</span></figcaption></figure>
+    <figure class="plot"><img src="hub.jpg" alt="Cast-iron wheel hub used as the test part" loading="lazy"><figcaption><span data-l="en">The cast-iron wheel hub under test.</span><span data-l="zh">被测铸铁轮毂。</span></figcaption></figure>
+  </div>
+
+  <h2><span data-l="en">Error Correction</span><span data-l="zh">误差校正</span></h2>
+  <p class="prose" data-l="en">The beam is sensitive to its angle of incidence, so the part's axis has to line up with the turntable's. The paper measures two errors with the transducer itself, using ultrasonic ranging:</p>
+  <p class="prose" data-l="zh">声束对入射角很敏感，所以工件轴线必须和转台旋转轴重合。论文直接用探头做超声测距，测量两类误差：</p>
+  <ul class="prose">
+    <li data-l="en"><b>Verticality:</b> the robot moves a known distance across a reference disc and measures the height change, giving the tilt angle. The software then compensates for it.</li>
+    <li data-l="zh"><b>垂直度误差：</b>机器人在基准圆盘上方平移已知距离，测量高度变化，得到倾斜角，再由软件补偿。</li>
+    <li data-l="en"><b>Eccentricity:</b> with the robot held still and the turntable rotating, the measured distance swings twice per turn. Half the peak-to-peak swing is the offset, which is then fixed by adjusting the jaws.</li>
+    <li data-l="zh"><b>偏心误差：</b>机器人固定不动、转台旋转一周，测得的距离会有最大和最小值；两者之差的一半就是偏心量，再通过调整卡爪消除。</li>
+  </ul>
+  <div class="math">\[ \theta_x=\arctan\frac{\Delta l_y}{l_y},\quad \theta_y=\arctan\frac{\Delta l_x}{l_x} \qquad\qquad e=\frac{d_{2}-d_{1}}{2} \]</div>
+
+  <h2><span data-l="en">Result</span><span data-l="zh">实验结果</span></h2>
+  <p class="prose" data-l="en">Four 0.8 mm flat-bottom holes, 1–4 mm deep and buried 26–29 mm below the scanned surface, all show clearly in the C-scan above. A 15 MHz transducer resolves them better than a 10 MHz one, but coarse grains in the cast iron also add more clutter at the higher frequency.</p>
+  <p class="prose" data-l="zh">内壁上 4 个 0.8 mm 平底孔（钻深 1–4 mm，埋深 26–29 mm）在上方 C 扫描图中都能清楚识别。15 MHz 探头分辨率高于 10 MHz，但铸铁粗晶带来的杂波也更严重，选频率时需要兼顾材料特性。</p>
+
+  <h2><span data-l="en">My Role</span><span data-l="zh">我的工作</span></h2>
+  <ul class="prose">
+    <li data-l="en">Made SolidWorks drawings of system parts.</li>
+    <li data-l="zh">用 SolidWorks 绘制系统零部件图纸。</li>
+    <li data-l="en">Ran the immersion scans on the wheel hub.</li>
+    <li data-l="zh">完成轮毂的水浸扫查实验。</li>
+  </ul>
+
+  <h2><span data-l="en">Rebuilt Hub Model</span><span data-l="zh">轮毂模型重建</span></h2>
+  <p class="prose" data-l="en">The original CAD files are no longer available, so I rebuilt the hub from the paper's section drawing. The wall at the defect zone is 30 mm (29 mm burial + 1 mm drill depth), which sets the scale; the red outline is the model's section laid over the paper's figure.</p>
+  <p class="prose" data-l="zh">原始 CAD 文件已经找不到了，所以根据论文剖面图重建了轮毂模型。缺陷区壁厚 30 mm（埋深 29 mm + 钻深 1 mm）作为比例尺；右图红线是模型剖面叠在论文原图上的效果。</p>
+  <div class="figs">
+    <figure class="plot"><img src="model.jpg" alt="Rebuilt 3D model of the wheel hub, full and half section" loading="lazy"><figcaption><span data-l="en">Rebuilt model (full and half section).</span><span data-l="zh">重建模型（整体与半剖）。</span></figcaption></figure>
+    <figure class="plot"><img src="model-overlay.jpg" alt="Model section in red overlaid on the paper's section drawing" loading="lazy"><figcaption><span data-l="en">Model section (red) over paper fig. 7b.</span><span data-l="zh">模型剖面（红线）与论文图 7b 对比。</span></figcaption></figure>
+  </div>
+  <p class="small" data-l="en">Dimensions are estimated from the figure. Bolt-hole count is taken from the photo.</p>
+  <p class="small" data-l="zh">尺寸由图纸比例估算；螺栓孔数量按照片确定。</p>
+
+  <p class="small">Wang J., Zhang H., Xu H., <b>Wang C.</b>, Cao J., Liu T., Li Z., Yang J. <i>Robot-Assisted Ultrasonic Testing Technology for Complex Revolved Workpiece.</i> J. Phys.: Conf. Ser. 2679, 012006 (2024). Paper figures reused under CC BY 3.0.</p>
+</article>
+
+<footer><span>© 2026 Changyu Wang</span><a href="../../">wangcy0928.github.io</a></footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  function setLang(l){root.lang=l==='zh'?'zh-CN':'en';try{localStorage.setItem('cw-lang',l)}catch(e){}
+    document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===l))})}
+  setLang(root.lang==='zh-CN'?'zh':'en');
+  document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.dataset.lang)})});
+  document.getElementById('theme').addEventListener('click',function(){
+    var cur=root.dataset.theme||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    root.dataset.theme=cur==='light'?'dark':'light';try{localStorage.setItem('cw-theme',root.dataset.theme)}catch(e){}
+  });
+})();
+</script>
+
+</body>
+</html>
