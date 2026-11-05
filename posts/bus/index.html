@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>From Here Bus Stop Screen | Changyu Wang</title>
+<meta name="description" content="From Here: a SEPTA bus stop screen that turns the wait into nearby places you can reach in time. Live arrivals, TomTom places, an LLM pick checked by hard-coded time rules.">
+<script>
+try{var t=localStorage.getItem('cw-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+try{if(localStorage.getItem('cw-lang')==='zh')document.documentElement.lang='zh-CN'}catch(e){}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#101312; --top:#1a1d1c; --surface:#171a19; --surface-2:#212524;
+  --text:#ecefed; --muted:#b4bdb9; --soft:#828c88; --line:#2f3533;
+  --accent:#2aa3dc; --accent-warm:#f0906a; --go:#17864f; --go-line:#2fbf74; --go-hi:#20a863;
+  --good:#3fcf8e;
+  --sans:"IBM Plex Sans","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c; --good:#13804f;
+}}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f4f6f3; --top:#ffffff; --surface:#ffffff; --surface-2:#ecefeb;
+  --text:#151817; --muted:#4e5954; --soft:#69736e; --line:#d5dad3;
+  --accent:#006fa8; --accent-warm:#c25432; --go:#17864f; --go-line:#17864f; --go-hi:#1f9a5c; --good:#13804f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;padding-top:env(safe-area-inset-top,0px);background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16.5px;line-height:1.65}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-warm)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3,p{margin:0;overflow-wrap:anywhere}
+h1,h2,h3{line-height:1.15;text-wrap:balance}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:1px 6px;border-radius:4px}
+
+html[lang="en"] [data-l="zh"],html[lang="zh-CN"] [data-l="en"]{display:none!important}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:11;background:var(--bg)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text);font-weight:700}
+.brand b{display:grid;place-items:center;width:34px;height:34px;background:var(--text);color:var(--bg);font-size:14px}
+.acts{display:flex;align-items:center;gap:10px}
+.lang{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden}
+.lang button{min-width:46px;height:32px;border:0;background:transparent;color:var(--accent);cursor:pointer;font:700 14px var(--sans)}
+.lang button+button{border-left:1px solid var(--accent)}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.theme{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;font-size:16px}
+
+article{width:min(980px,100%);margin:0 auto;padding-block:40px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+.back{font-weight:700;font-size:15px}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+h1{font-size:clamp(30px,4.4vw,48px);font-weight:700;letter-spacing:-.01em}
+.lede{font-size:clamp(17px,1.9vw,20px);color:var(--muted);max-width:66ch}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btns a{display:inline-flex;align-items:center;min-height:40px;padding:8px 16px;border:1px solid var(--go-line);border-radius:4px;background:var(--go);color:#f4fff8;font-weight:700;font-size:15px}
+.btns a:hover{background:var(--go-hi);color:#fff}
+.btns a.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btns a.ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+h2{font-size:clamp(23px,2.6vw,30px);margin-top:26px}
+h3{font-size:19px;margin-top:6px}
+.prose{display:grid;gap:12px;color:var(--muted);max-width:70ch}
+.prose b{color:var(--text);font-weight:600}
+ul.prose{margin:0;padding-left:1.2em}
+p.prose{display:block}
+ul.prose li::marker{color:var(--accent)}
+
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.facts div{background:var(--surface);padding:14px 16px;display:grid;gap:2px;min-width:0}
+.facts span{font-size:12.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+.facts b{font-size:15px;font-weight:600}
+@media (max-width:720px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+figure{margin:0;border:1px solid var(--line);background:var(--surface)}
+figure img,figure video{display:block;width:100%;height:auto}
+figure.plot img,figure.plot video{background:#fff}
+figure.demo{background:#0c0e0d}
+figure.demo video{max-height:min(78vh,720px);width:auto;max-width:100%;margin:0 auto}
+figcaption{padding:10px 14px;color:var(--soft);font-size:14px}
+.viewer{border:1px solid var(--line);background:var(--surface)}
+.viewer iframe{display:block;width:100%;height:900px;border:0;background:var(--surface)}
+.viewer .vnote{padding:10px 14px;color:var(--soft);font-size:14px;border-top:1px solid var(--line)}
+.placeholder{display:grid;place-items:center;min-height:220px;padding:24px;text-align:center;color:var(--soft);border:1px dashed var(--line);background:var(--surface);font-size:15px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:600;background:var(--surface-2)}
+td{color:var(--muted);background:var(--surface)}
+td.n{font-family:var(--mono);font-size:14px;text-align:right}
+th.n{text-align:right}
+tr.best td{color:var(--text);font-weight:600}
+tr.best td.n{color:var(--good)}
+tr:last-child td{border-bottom:0}
+.small{font-size:14px;color:var(--soft)}
+
+pre.flow{margin:0;overflow-x:auto;padding:18px 20px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:14px/1.55 var(--mono)}
+.diagram{border:1px solid var(--line);background:#fff;padding:20px;overflow-x:auto;min-height:120px}
+.diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.diagram .wait{color:#69736e;font-size:14px;text-align:center}
+.math{overflow-x:auto;padding:14px 18px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.mods{display:grid;gap:0;border:1px solid var(--line)}
+.mods div{display:grid;grid-template-columns:200px minmax(0,1fr);gap:4px 18px;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface)}
+.mods div:first-child{border-top:0}
+.mods code{justify-self:start}
+.mods p{color:var(--muted);font-size:15px}
+@media (max-width:640px){.mods div{grid-template-columns:1fr}}
+.figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.figs figure img{background:#fff;padding:14px;aspect-ratio:3/2;object-fit:contain}
+@media (max-width:700px){.figs{grid-template-columns:1fr}}
+.mods div > code{align-self:start}
+
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;border-top:1px solid var(--line);color:var(--soft);font-size:14px;
+  padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},chtml:{displayAlign:'left'}};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="../../"><b>CW</b>Changyu Wang</a>
+  <div class="acts">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-en" data-lang="en">EN</button>
+      <button type="button" id="lang-zh" data-lang="zh">中文</button>
+    </div>
+    <button class="theme" type="button" id="theme" aria-label="Toggle light and dark mode">◐</button>
+  </div>
+</header>
+
+<article>
+  <a class="back" href="../../#bus"><span data-l="en">← All projects</span><span data-l="zh">← 全部项目</span></a>
+  <p class="eyebrow">Fall 2026 · LLMs for UX Prototyping · University of Pennsylvania</p>
+  <h1><span data-l="en">From Here: A Smarter SEPTA Bus Stop Screen</span><span data-l="zh">From Here：更聪明的 SEPTA 公交站屏幕</span></h1>
+  <div class="btns">
+    <a href="https://week3-bay-gamma.vercel.app/" target="_blank" rel="noopener"><span data-l="en">Live prototype ↗</span><span data-l="zh">在线原型 ↗</span></a>
+    <a class="ghost" href="https://github.com/wangcy0928/Week3" target="_blank" rel="noopener">GitHub Repository ↗</a>
+  </div>
+
+  <div class="placeholder"><span data-l="en">Screen recording coming soon.</span><span data-l="zh">录屏即将上传。</span></div>
+
+  <div class="facts">
+    <div><span data-l="en">Role</span><span data-l="zh">角色</span><b data-l="en">Solo: concept, UX, build, deploy</b><b data-l="zh">独立完成：概念、交互、开发、部署</b></div>
+    <div><span data-l="en">Stop</span><span data-l="zh">站点</span><b>Walnut &amp; 11th St · SEPTA 14885</b></div>
+    <div><span data-l="en">Routes</span><span data-l="zh">线路</span><b>9 · 12 · 21 · 42</b></div>
+    <div><span data-l="en">Stack</span><span data-l="zh">技术栈</span><b>JS · Vercel · SEPTA · TomTom · LLM</b></div>
+  </div>
+
+  <!-- ============ Goal ============ -->
+  <h2><span data-l="en">Project Goal</span><span data-l="zh">项目目标</span></h2>
+  <div class="prose" data-l="en">
+    <p>The course brief was a "street interface": a digital screen for a real bus stop, built over four weeks with real data. I chose <b>belonging</b> as the design direction. A bus stop is a place people want to leave as soon as possible. I wanted the screen to answer the question riders actually have: <b>what can I do with this wait?</b></p>
+    <p>The screen had to:</p>
+  </div>
+  <div class="prose" data-l="zh">
+    <p>课程题目是 "Street Interface"：用四周时间、基于真实数据，为一个真实公交站设计一块数字屏幕。我选的设计方向是 <b>belonging（归属感）</b>。公交站是人们只想尽快离开的地方，我希望这块屏幕回答乘客真正关心的问题：<b>这段等车时间，我能做什么？</b></p>
+    <p>屏幕需要做到：</p>
+  </div>
+  <ul class="prose">
+    <li data-l="en">Show live arrivals for the four routes at this stop, and say plainly when no bus is tracked.</li>
+    <li data-l="zh">显示本站四条线路的实时到站时间；没有追踪到车辆时如实说明。</li>
+    <li data-l="en">Suggest nearby places that fit the time left before the bus, and are open right now.</li>
+    <li data-l="zh">推荐附近来得及去、且现在正营业的地方。</li>
+    <li data-l="en">Show how to get anywhere from this stop: on foot, or on a bus that stops here.</li>
+    <li data-l="zh">告诉乘客从这一站怎么去：步行，或者坐本站的公交。</li>
+    <li data-l="en">Work as a shared public screen: big touch targets, readable at a glance, and reset for the next person.</li>
+    <li data-l="zh">适合公共共享屏幕：大触控区域、一眼可读，用完自动复位给下一个人。</li>
+  </ul>
+
+  <!-- ============ User flow ============ -->
+  <h2><span data-l="en">User Flow</span><span data-l="zh">用户流程</span></h2>
+  <div class="diagram" data-l="en" data-mermaid="flow-en"><p class="wait">Loading diagram…</p></div>
+  <div class="diagram" data-l="zh" data-mermaid="flow-zh"><p class="wait">图表加载中…</p></div>
+
+  <!-- ============ Architecture ============ -->
+  <h2><span data-l="en">Program Logic Structure</span><span data-l="zh">程序逻辑结构</span></h2>
+  <p class="prose" data-l="en">The screen is a single page. Three serverless functions on Vercel do the work it cannot do in the browser. Every decision that could send a rider the wrong way is hard-coded; the language model only chooses among options the rules have already approved, and writes the one-line pitch.</p>
+  <p class="prose" data-l="zh">屏幕本身是一个单页面，浏览器做不了的事交给 Vercel 上的三个 serverless 函数。凡是可能把乘客引错方向的判断，全部用确定性规则写死；大模型只在规则已经筛过的候选里做选择，并写一句推荐语。</p>
+  <div class="diagram" data-l="en" data-mermaid="arch-en"><p class="wait">Loading diagram…</p></div>
+  <div class="diagram" data-l="zh" data-mermaid="arch-zh"><p class="wait">图表加载中…</p></div>
+
+  <!-- ============ Core methods ============ -->
+  <h2><span data-l="en">Core Methods</span><span data-l="zh">核心方法</span></h2>
+
+  <h3><span data-l="en">1. Estimating arrivals without an arrival API</span><span data-l="zh">1. 没有到站预测接口，自己估算到站时间</span></h3>
+  <ul class="prose">
+    <li data-l="en">SEPTA's TransitView gives live bus positions but no "minutes until this bus reaches this stop". The browser also cannot call SEPTA directly (no CORS headers), so <code>api/septa.js</code> fetches it server-side and computes the estimate.</li>
+    <li data-l="zh">SEPTA 的 TransitView 只给实时车辆位置，没有"这辆车几分钟后到这一站"的数据；而且浏览器不能直接请求 SEPTA（没有 CORS 头）。所以由 <code>api/septa.js</code> 在服务器端获取数据并计算到站时间。</li>
+    <li data-l="en">Filter first: keep only real vehicles (drop SEPTA's placeholder rows), heading west (Walnut St is one-way westbound), on the Walnut corridor, and still east of the stop.</li>
+    <li data-l="zh">先筛选：只保留真实车辆（去掉 SEPTA 的占位记录），车头朝西（Walnut 街是向西的单行道），在 Walnut 走廊上，并且还在本站东边（没开过去）。</li>
+    <li data-l="en">Then estimate from distance. Center City is a grid, so the straight-line distance is stretched by a detour factor:</li>
+    <li data-l="zh">再按距离估算。市中心是棋盘路网，所以直线距离要乘一个绕行系数：</li>
+  </ul>
+  <div class="math">\[ d = 1.25 \times \text{haversine}(\text{bus},\ \text{stop}), \qquad t_{arrive} = \frac{d}{3.1\ \text{m/s}}, \qquad 200^\circ < \text{heading} < 340^\circ \]</div>
+  <p class="small" data-l="en">3.1 m/s (about 7 mph) is the Center City average including stops. Buses more than 45 min out are ignored; a bus 2+ min behind schedule gets a "Delay" tag. With nothing tracked, the screen shows "--" instead of a made-up number.</p>
+  <p class="small" data-l="zh">3.1 m/s（约 7 英里/小时）是市中心含停站的平均车速。超过 45 分钟的车不显示；晚点 2 分钟以上标 "Delay"。一辆车都追踪不到时显示 "--"，不编数字。</p>
+
+  <h3><span data-l="en">2. Side Quest: what fits in the wait</span><span data-l="zh">2. Side Quest：等车时间里能去哪</span></h3>
+  <ul class="prose">
+    <li data-l="en">Tap a bus and the screen works out a time budget: the wait minus 2 minutes to be back early. Under 5 minutes, it tells the rider to stay.</li>
+    <li data-l="zh">点一条线路，屏幕先算出时间预算：等车时间减去 2 分钟的提前返回缓冲。不足 5 分钟就建议留在站台。</li>
+    <li data-l="en">TomTom supplies real places nearby with opening hours. A place qualifies only if the round trip plus a minimum visit fits the budget, and it stays open long enough:</li>
+    <li data-l="zh">附近地点和营业时间来自 TomTom。一个地点只有满足下面两个条件才会成为候选：来回步行加最短停留时间在预算内，并且到时候还没关门：</li>
+  </ul>
+  <div class="math">\[ \text{budget} = t_{wait} - 2, \qquad 2\,t_{walk} + t_{dwell} \le \text{budget}, \qquad t_{close} \ge t_{walk} + t_{dwell} \]</div>
+  <ul class="prose">
+    <li data-l="en">The language model reads the live situation (wait, delay, time of day, weather, what is open), picks 3 of the qualifying places and writes a one-line pitch for each.</li>
+    <li data-l="zh">大模型读取当前情况（等待时间、是否晚点、时段、天气、哪些在营业），从合格的候选里挑 3 个，每个配一句推荐语。</li>
+    <li data-l="en">Code then re-checks the model's answer: it clamps any visit length that would break the budget or run past closing time, and drops the place if too little time is left. If the model is unavailable, the screen falls back to the closest open places and says so.</li>
+    <li data-l="zh">代码再复核模型的答案：停留时间超出预算或超过关门时间的会被压缩，剩余时间太少就直接去掉。模型不可用时，屏幕退回到"最近的营业地点"，并在界面上注明。</li>
+  </ul>
+
+  <h3><span data-l="en">3. Explore and "how do I get there from here"</span><span data-l="zh">3. Explore 与"从这里怎么去"</span></h3>
+  <ul class="prose">
+    <li data-l="en">Explore offers four moods (food, sights, shops, local gems) within about a 10-minute walk, with the model picking the 3 most worthwhile.</li>
+    <li data-l="zh">Explore 提供四个类别（美食、景点、购物、本地特色），范围约步行 10 分钟，由模型挑出最值得去的 3 个。</li>
+    <li data-l="en">For 21 Philadelphia landmarks, <code>api/transit.js</code> compares walking with riding one of the four buses here, using SEPTA's real stop list. It only offers direct rides with at most 12 minutes' walk at the end, because SEPTA has no public trip-planner API. The screen states this limit.</li>
+    <li data-l="zh">针对费城 21 个地标，<code>api/transit.js</code> 用 SEPTA 的真实站点表，比较"步行"和"坐本站四条线路之一"。因为 SEPTA 没有公开的行程规划接口，所以只推荐直达、下车后步行不超过 12 分钟的方案，并在屏幕上写明这一限制。</li>
+  </ul>
+
+  <h3><span data-l="en">4. Designed for a shared screen</span><span data-l="zh">4. 为公共共享屏幕设计</span></h3>
+  <ul class="prose">
+    <li data-l="en">The map is centred on the stop, not on anyone's phone, and draws the walking route to the chosen place.</li>
+    <li data-l="zh">地图以站点为中心，而不是以手机定位为中心，并画出到所选地点的步行路线。</li>
+    <li data-l="en">Every card shows a shrinking progress bar and closes on its own, so the next rider never inherits the last person's screen.</li>
+    <li data-l="zh">每张信息卡下方都有一条缩短的进度条，时间到自动关闭，下一个人不会看到上一个人的操作结果。</li>
+    <li data-l="en">Large buttons and a portrait layout close to a real shelter display.</li>
+    <li data-l="zh">大按钮，竖屏布局，尺寸接近真实候车亭屏幕。</li>
+  </ul>
+
+  <!-- ============ Iteration ============ -->
+  <h2><span data-l="en">Iteration</span><span data-l="zh">迭代过程</span></h2>
+  <div class="diagram" data-l="en" data-mermaid="iter-en"><p class="wait">Loading diagram…</p></div>
+  <div class="diagram" data-l="zh" data-mermaid="iter-zh"><p class="wait">图表加载中…</p></div>
+
+  <!-- ============ Modules ============ -->
+  <h2><span data-l="en">Implementation Modules</span><span data-l="zh">代码模块</span></h2>
+  <div class="mods">
+    <div><code>index.html</code><p data-l="en">The bus stop screen itself: live arrival rows, map, Side Quest and Explore cards, auto-reset.</p><p data-l="zh">站牌屏幕本身：实时到站列表、地图、Side Quest 和 Explore 信息卡、自动复位。</p></div>
+    <div><code>api/septa.js</code><p data-l="en">SEPTA proxy and the rule-based arrival estimate.</p><p data-l="zh">SEPTA 数据代理和基于规则的到站估算。</p></div>
+    <div><code>api/quest.js</code><p data-l="en">Side Quest and Explore: TomTom places and hours, the language-model pick, and the time-budget checks.</p><p data-l="zh">Side Quest 和 Explore：TomTom 地点与营业时间、大模型挑选、时间预算复核。</p></div>
+    <div><code>api/transit.js</code><p data-l="en">Walk-or-ride directions from this stop to 21 landmarks.</p><p data-l="zh">从本站到 21 个地标的步行或乘车方案。</p></div>
+  </div>
+
+  <!-- ============ Limitations ============ -->
+  <h2><span data-l="en">Limitations</span><span data-l="zh">局限</span></h2>
+  <ul class="prose">
+    <li data-l="en">Arrival times are my own distance-based estimate, not a SEPTA prediction.</li>
+    <li data-l="zh">到站时间是我按距离做的估算，不是 SEPTA 官方预测。</li>
+    <li data-l="en">Directions cover direct rides only, with no transfers.</li>
+    <li data-l="zh">乘车方案只覆盖直达，不含换乘。</li>
+    <li data-l="en">A course prototype tested in the browser, not on a real shelter display. Not affiliated with SEPTA.</li>
+    <li data-l="zh">这是在浏览器里测试的课程原型，没有装到真实候车亭屏幕上，与 SEPTA 无关。</li>
+  </ul>
+</article>
+
+<footer><span>© 2026 Changyu Wang</span><a href="../../">wangcy0928.github.io</a></footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  function setLang(l){root.lang=l==='zh'?'zh-CN':'en';try{localStorage.setItem('cw-lang',l)}catch(e){}
+    document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===l))})}
+  setLang(root.lang==='zh-CN'?'zh':'en');
+  document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.dataset.lang)})});
+  document.getElementById('theme').addEventListener('click',function(){
+    var cur=root.dataset.theme||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+    root.dataset.theme=cur==='light'?'dark':'light';try{localStorage.setItem('cw-theme',root.dataset.theme)}catch(e){}
+  });
+})();
+</script>
+
+<script type="text/plain" id="flow-en">
+flowchart TD
+    A["Idle screen<br/>live arrivals · map of the stop"] --> B{"Rider taps"}
+    B -- "a bus row" --> C["Side Quest<br/>budget = wait − 2 min"]
+    C --> C2{"budget ≥ 5 min?"}
+    C2 -- No --> C3["Stay here: your bus is close"]
+    C2 -- Yes --> D["3 places that fit<br/>walk time · visit time · pitch"]
+    B -- "Explore nearby" --> E["Pick a mood<br/>food · sights · shops · gems"]
+    E --> D
+    B -- "a landmark" --> F["Walk or ride from this stop"]
+    D --> G["Tap a place<br/>walking route on the map"]
+    G --> H["Card closes on its own"]
+    F --> H
+    C3 --> H
+    H --> A
+</script>
+<script type="text/plain" id="flow-zh">
+flowchart TD
+    A["待机画面<br/>实时到站 · 站点地图"] --> B{"乘客点击"}
+    B -- "某条线路" --> C["Side Quest<br/>预算 = 等车时间 − 2 分钟"]
+    C --> C2{"预算 ≥ 5 分钟？"}
+    C2 -- 否 --> C3["建议留下：车快到了"]
+    C2 -- 是 --> D["3 个来得及去的地方<br/>步行时间 · 停留时间 · 推荐语"]
+    B -- "Explore nearby" --> E["选择类别<br/>美食 · 景点 · 购物 · 本地特色"]
+    E --> D
+    B -- "某个地标" --> F["从本站步行或乘车"]
+    D --> G["点击地点<br/>地图显示步行路线"]
+    G --> H["信息卡自动关闭"]
+    F --> H
+    C3 --> H
+    H --> A
+</script>
+<script type="text/plain" id="arch-en">
+flowchart LR
+    S["Bus stop screen<br/>index.html"] --> P["api/septa.js<br/>filter + arrival estimate"]
+    S --> Q["api/quest.js<br/>Side Quest · Explore"]
+    S --> T["api/transit.js<br/>walk or ride"]
+    P --> SE[("SEPTA TransitView<br/>live positions")]
+    T --> SS[("SEPTA stop lists")]
+    Q --> TT[("TomTom<br/>places · hours · routes")]
+    Q --> AI["Language model<br/>picks 3 + pitch"]
+    AI --> R["Hard-coded checks<br/>time budget · opening hours"]
+    R --> S
+</script>
+<script type="text/plain" id="arch-zh">
+flowchart LR
+    S["站牌屏幕<br/>index.html"] --> P["api/septa.js<br/>筛选 + 到站估算"]
+    S --> Q["api/quest.js<br/>Side Quest · Explore"]
+    S --> T["api/transit.js<br/>步行或乘车"]
+    P --> SE[("SEPTA TransitView<br/>实时车辆位置")]
+    T --> SS[("SEPTA 站点表")]
+    Q --> TT[("TomTom<br/>地点 · 营业时间 · 路线")]
+    Q --> AI["大模型<br/>挑 3 个 + 推荐语"]
+    AI --> R["规则复核<br/>时间预算 · 营业时间"]
+    R --> S
+</script>
+<script type="text/plain" id="iter-en">
+flowchart TD
+    W1["Week 1 · Concept<br/>three directions: accessibility, safety, belonging<br/>→ chose belonging"] --> W2
+    W2["Week 2 · Live data<br/>SEPTA proxy, arrival estimate,<br/>stop-centred map, walking times"] --> W3
+    W3["Week 3 · Final<br/>Side Quest + Explore with TomTom and an LLM,<br/>hard-coded time checks, walk-or-ride directions"]
+</script>
+<script type="text/plain" id="iter-zh">
+flowchart TD
+    W1["第 1 周 · 概念<br/>三个方向：无障碍、安全、归属感<br/>→ 选定归属感"] --> W2
+    W2["第 2 周 · 接入实时数据<br/>SEPTA 代理、到站估算、<br/>以站点为中心的地图、步行时间"] --> W3
+    W3["第 3 周 · 最终版<br/>Side Quest + Explore（TomTom + 大模型）、<br/>时间规则复核、步行/乘车方案"]
+</script>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:false,theme:"default",securityLevel:"strict",fontFamily:'"IBM Plex Sans","Noto Sans SC",sans-serif',flowchart:{nodeSpacing:40,rankSpacing:50,htmlLabels:true}});
+for(const box of document.querySelectorAll("[data-mermaid]")){
+  const id=box.dataset.mermaid;
+  try{const {svg}=await mermaid.render("m-"+id,document.getElementById(id).textContent);box.innerHTML=svg;}
+  catch(e){box.innerHTML='<p class="wait">'+(box.dataset.l==="zh"?"图表加载失败，请刷新页面。":"The diagram failed to load. Refresh the page to try again.")+'</p>';}
+}
+</script>
+</body>
+</html>

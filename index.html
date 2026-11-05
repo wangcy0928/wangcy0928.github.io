@@ -66,7 +66,7 @@ h1,h2,h3{line-height:1.12;text-wrap:balance}
 .meta a:hover,.meta button.copy:hover{color:var(--accent-warm)}
 .email{font-family:var(--mono);font-size:14px;user-select:all;color:var(--text)}
 
-.index{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(720px,100%);margin:26px auto 0}
+.index{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:min(980px,100%);margin:26px auto 0}
 .index h2{font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
 .index ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .index a{color:var(--accent);font-weight:600;font-size:15px}
@@ -194,9 +194,9 @@ var CAT={robo:['Robotics & hardware','#0E7490'],ai:['AI-built','#1D4ED8'],biz:['
 
 var I={
  en:{title:'Changyu Wang · Personal Projects',tagline:'Robotics · Mechatronics · Mechanical Design · Product Design · Product Management',school:'M.S. Mechanical Engineering & Applied Mechanics, UPenn · graduating Jun 2027',contact:'Contact:',copy:'Copy',copied:'Copied',foot:'Open to full-time roles in the US and China.',
-   g:{robo:'Robotics & Hardware',data:'Research & Data'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗',details:'Details',github:'GitHub ↗',replay:'3D replay ↗',patent:'Patent ↗'},
+   g:{robo:'Robotics & Hardware',ux:'Product & UX',data:'Research & Data'},edu:'Education',skills:'Skills',demo:'Live demo ↗',doi:'Paper DOI ↗',details:'Details',github:'GitHub ↗',replay:'3D replay ↗',patent:'Patent ↗'},
  zh:{title:'王长宇 · 个人作品集',tagline:'机器人 · 机电一体化 · 机械设计 · 产品设计 · 产品管理',school:'宾夕法尼亚大学 机械工程与应用力学硕士 · 2027 年 6 月毕业',contact:'联系：',copy:'复制',copied:'已复制',foot:'正在寻找中美两地的全职机会。',
-   g:{robo:'机器人与硬件',data:'科研与数据'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗',details:'项目详情',github:'GitHub ↗',replay:'3D 回放 ↗',patent:'专利 ↗'}
+   g:{robo:'机器人与硬件',ux:'产品与交互',data:'科研与数据'},edu:'教育背景',skills:'专业技能',demo:'在线演示 ↗',doi:'论文 DOI ↗',details:'项目详情',github:'GitHub ↗',replay:'3D 回放 ↗',patent:'专利 ↗'}
 };
 var P=[
 {id:'stir',g:'robo',year:'2026',split:[{v:'posts/stir/mixing-tall.mp4',p:'posts/stir/mixing-tall-poster.jpg',l:{en:'Simulation',zh:'仿真'}},{v:'posts/stir/demo.mp4',p:'posts/stir/demo-poster.jpg',l:{en:'Real robot',zh:'真机'}}],poster:'posts/stir/demo-thumb.jpg',
@@ -216,6 +216,14 @@ var P=[
  b:{en:['Set the technical route and split the work across the team.','Formulated magnetorheological-fluid and magnetic-sponge composites, and built the compliant body that deforms under the field.','Measured deformation and locomotion with camera tracking, and compared reinforcement designs in COMSOL FEA before going back to the bench.'],
     zh:['确定技术路线并组织团队分工。','配制磁流变液与磁性海绵复合材料，搭建在磁场下产生形变的柔性执行结构。','用相机追踪法测量形变与运动轨迹，并先用 COMSOL 有限元仿真比较加固方案，再回到实验台验证。']},
  cite:'Patent: Tang F., Zhang H., <b>Wang C.</b>, et al. <i>A Peristaltic Pipeline Soft Robot Based on Electromagnetic Control.</i>'},
+{id:'bus',g:'ux',year:'2026',tags:['UX design','Live transit data','LLM prototyping','Vercel'],
+ links:[{k:'details',u:'posts/bus/'},{k:'demo',u:'https://week3-bay-gamma.vercel.app/'},{k:'github',u:'https://github.com/wangcy0928/Week3'}],
+ t:{en:'From Here: A Smarter SEPTA Bus Stop Screen',zh:'From Here：更聪明的 SEPTA 公交站屏幕'},
+ s:{en:'A bus stop screen that turns the wait into nearby places you can actually reach in time.',zh:'把等车时间变成"来得及去的地方"的公交站屏幕。'},
+ o:{en:'LLMs for UX Prototyping, UPenn · Fall 2026 · Solo: concept, UX, build, deploy',zh:'宾大 LLMs for UX Prototyping 课程 · 2026 秋 · 独立完成概念、交互、开发与部署'},
+ m:'SEPTA stop 14885 · 4 routes · live data',
+ b:{en:['Designed around one rider question: what can I do with this wait? The screen shows live arrivals, then suggests food, sights and shops that fit the time left and are open now.','SEPTA has no bus arrival predictions, so a serverless function estimates them from live vehicle positions with explicit rules.','An LLM picks and pitches places, but only from candidates that pass hard-coded time and opening-hour checks, so it can never make a rider miss the bus.'],
+    zh:['围绕乘客的一个问题来设计：这段等车时间能做什么？屏幕显示实时到站，再推荐时间来得及、且正在营业的餐饮、景点和商店。','SEPTA 没有公交到站预测，所以用 serverless 函数根据实时车辆位置、按明确规则估算到站时间。','大模型负责挑选和写推荐语，但只能从通过时间和营业时间规则检查的候选里选，保证不会让乘客误车。']}},
 {id:'port',g:'data',year:'2026',tags:['Python','Web crawling','Entity matching','Data QA'],
  t:{en:'Yangtze Port Data Pipeline',zh:'长江港口数据管线'},
  s:{en:'A crawl-and-match pipeline that turned scattered public sources into one verified port dataset.',zh:'把分散的公开数据源整理成一份经过核验的港口数据集。'},
@@ -237,7 +245,7 @@ try{ if(localStorage.getItem('cw-lang')==='zh') lang='zh'; }catch(e){}
 try{ var th=localStorage.getItem('cw-theme'); if(th) document.documentElement.dataset.theme=th; }catch(e){}
 function x(f){return typeof f==='string'?f:(f[lang]||f.en)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-var GROUPS=['robo','data'];
+var GROUPS=['robo','ux','data'];
 function thumbHtml(p){return p.poster?'<div class="thumb photo" aria-hidden="true"><img src="'+p.poster+'" alt=""></div>':'<div class="thumb" aria-hidden="true">'+SVG[p.id]+'</div>'}
 function mediaHtml(p){if(p.split)return '<div class="pmedia split'+(p.stack?' stack':'')+'">'+p.split.map(function(s,i){return '<div class="half'+(i?' real':' sim')+'"><video src="'+s.v+'" poster="'+s.p+'" autoplay muted loop playsinline aria-label="'+x(s.l||s.a)+'"></video>'+(s.l?'<span class="vlabel">'+x(s.l)+'</span>':'')+'</div>'}).join('')+'</div>';return p.vid?'<div class="pmedia photo'+(p.real?' real':'')+'"><video src="'+p.vid+'" poster="'+p.poster+'" autoplay muted loop playsinline aria-label="'+x(p.t)+'"></video></div>':'<div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div>'}
 
