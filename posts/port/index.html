@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yangtze Berth Atlas | Changyu Wang</title>
 <meta name="description" content="Scraping, cleaning and mapping 1,828 berths along the Yangtze River (Chongqing → Shanghai), with a nautical/satellite map and WGS-84 → GCJ-02 coordinate correction.">
+<script>
+try{var t=localStorage.getItem('cw-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+try{if(localStorage.getItem('cw-lang')==='zh')document.documentElement.lang='zh-CN'}catch(e){}
+</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,6 +29,12 @@
   --accent:#2aa3dc; --dry:#f0a050; --tank:#5aa2f0; --both:#a58cf0; --warn:#f07a5a;
 }
 *{box-sizing:border-box}
+html[lang="en"] [data-l="zh"],html[lang="zh-CN"] [data-l="en"]{display:none!important}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.lang{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden}
+.lang button{min-width:46px;height:32px;border:0;background:transparent;color:var(--accent);cursor:pointer;font:700 14px inherit;font-family:inherit}
+.lang button+button{border-left:1px solid var(--accent)}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif}
 .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
 header{padding:48px 0 24px}
@@ -79,51 +89,59 @@ footer{padding:48px 0;color:var(--muted);font-size:13px}
 <body>
 <div class="wrap">
 <header>
-  <a href="../../#port" style="font-size:14px;text-decoration:none">← Changyu Wang</a>
-  <div class="kicker">Data engineering · GIS · Internship project</div>
-  <h1>Yangtze Berth Atlas</h1>
-  <p class="muted">I built a scraper that collected every berth listed on a shipping-data platform along the Yangtze River from Chongqing to Shanghai. I then cleaned the data into a single table and made a map tool that switches between a nautical chart and satellite imagery, so each berth's type can be checked by eye. The hardest bug was markers that drifted hundreds of metres whenever the base map changed. The cause turned out to be China's GCJ-02 coordinate offset.</p>
+  <div class="topbar">
+    <a href="../../#port" style="font-size:14px;text-decoration:none">← Changyu Wang</a>
+    <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="zh">中文</button></div>
+  </div>
+  <div class="kicker"><span data-l="en">Data engineering · GIS · Internship project</span><span data-l="zh">数据工程 · GIS · 实习项目</span></div>
+  <h1><span data-l="en">Yangtze Berth Atlas</span><span data-l="zh">长江泊位地图</span></h1>
+  <p class="muted" data-l="en">I built a scraper that collected every berth listed on a shipping-data platform along the Yangtze River from Chongqing to Shanghai. I then cleaned the data into a single table and made a map tool that switches between a nautical chart and satellite imagery, so each berth's type can be checked by eye. The hardest bug was markers that drifted hundreds of metres whenever the base map changed. The cause turned out to be China's GCJ-02 coordinate offset.</p>
+  <p class="muted" data-l="zh">我写了一个爬虫，批量获取了一个航运数据平台上长江重庆至上海段列出的全部泊位，把数据清洗整理成一张表，并做了一个可以在海图和卫星图之间切换的地图工具，用来目测核对每个泊位的类型。最难的 bug 是每次切换底图，标记都会漂移几百米，原因是国内卫星图使用的 GCJ-02 坐标偏移。</p>
   <div class="stats" id="stats"></div>
 </header>
 
 <section class="mapbox" aria-label="Interactive berth map">
   <div class="toolbar">
     <div class="seg" role="group" aria-label="Base map">
-      <button data-base="chart" aria-pressed="true">Nautical chart</button>
-      <button data-base="esri" aria-pressed="false">Satellite (WGS-84)</button>
-      <button data-base="amap" aria-pressed="false">Satellite (China, GCJ-02)</button>
+      <button data-base="chart" aria-pressed="true"><span data-l="en">Nautical chart</span><span data-l="zh">海图</span></button>
+      <button data-base="esri" aria-pressed="false"><span data-l="en">Satellite</span><span data-l="zh">卫星图</span> (WGS-84)</button>
+      <button data-base="amap" aria-pressed="false"><span data-l="en">Satellite (China</span><span data-l="zh">国内卫星图 (高德</span>, GCJ-02)</button>
     </div>
     <label class="toggle" id="fixwrap" aria-disabled="true" title="Only relevant on the China satellite layer">
-      <input type="checkbox" id="fix" checked disabled> Coordinate correction
+      <input type="checkbox" id="fix" checked disabled> <span data-l="en">Coordinate correction</span><span data-l="zh">坐标纠偏</span>
     </label>
   </div>
-  <div class="banner" id="banner">Correction is off. On this layer every marker is now drawn about 300–600 m away from its true position. This is the drift bug.</div>
+  <div class="banner" id="banner"><span data-l="en">Correction is off. On this layer every marker is now drawn about 300–600 m away from its true position. This is the drift bug.</span><span data-l="zh">纠偏已关闭。在这个底图上，所有标记都偏离真实位置约 300–600 米，这就是当时的漂移 bug。</span></div>
   <div id="map"></div>
   <div class="legend">
-    <span><i class="dot" style="background:var(--dry)"></i>Dry cargo</span>
-    <span><i class="dot" style="background:var(--tank)"></i>Tanker</span>
-    <span><i class="dot" style="background:var(--both)"></i>Both</span>
-    <span>Large circles are ports, sized by berth count. Small dots are sample berths; zoom in to see them.</span>
+    <span><i class="dot" style="background:var(--dry)"></i><span data-l="en">Dry cargo</span><span data-l="zh">干货</span></span>
+    <span><i class="dot" style="background:var(--tank)"></i><span data-l="en">Tanker</span><span data-l="zh">油品/液货</span></span>
+    <span><i class="dot" style="background:var(--both)"></i><span data-l="en">Both</span><span data-l="zh">两者兼有</span></span>
+    <span data-l="en">Large circles are ports, sized by berth count. Small dots are sample berths; zoom in to see them.</span><span data-l="zh">大圆为港口，大小代表泊位数；小点为样本泊位，放大后可见。</span>
   </div>
   <div class="portlist" id="portlist" aria-label="Jump to port"></div>
 </section>
-<p class="muted" style="font-size:13px;margin-top:8px">Data note: the 35 ports are shown as aggregate counts. Berth-level points are a sample of 30 berths from each of six ports (highlighted), with a reduced set of fields.</p>
+<p class="muted" style="font-size:13px;margin-top:8px"><span data-l="en">Data note: the 35 ports are shown as aggregate counts. Berth-level points are a sample of 30 berths from each of six ports (highlighted), with a reduced set of fields.</span><span data-l="zh">数据说明：35 个港口只显示汇总数量；泊位级的点是从六个港口（高亮）中各抽取 30 个泊位的样本，且只保留部分字段。</span></p>
 
-<h2>How it works</h2>
+<h2><span data-l="en">How it works</span><span data-l="zh">实现流程</span></h2>
 <div class="steps">
-  <div class="step"><div class="n">01 · Discover</div><h3>Reverse-engineer the API</h3><p>Captured the map app's XHR traffic and found the region and berth endpoints. With an authorised account, the request headers are derived from the session JWT, so only one credential needs to be configured.</p></div>
-  <div class="step"><div class="n">02 · Locate</div><h3>Find Yangtze ports</h3><p>Queried six overlapping rectangles, since one big box timed out. Ports were then filtered by haversine distance (≤ 30 km) to a 70-point polyline of the main channel.</p></div>
-  <div class="step"><div class="n">03 · Collect</div><h3>Resumable scraping</h3><p>Each port's berths are cached to their own file with atomic writes. Timeouts and expired tokens just mean re-running the command: only the missing ports get fetched.</p></div>
-  <div class="step"><div class="n">04 · Deliver</div><h3>Clean + export</h3><p>1,828 berths × 95 raw fields go into one bilingual Excel workbook, with fill-rate stats per field and an option to drop the ~55 always-empty columns.</p></div>
+  <div class="step"><div class="n"><span data-l="en">01 · Discover</span><span data-l="zh">01 · 发现</span></div><h3><span data-l="en">Reverse-engineer the API</span><span data-l="zh">分析网站接口</span></h3><p><span data-l="en">Captured the map app's XHR traffic and found the region and berth endpoints. With an authorised account, the request headers are derived from the session JWT, so only one credential needs to be configured.</span><span data-l="zh">抓取地图应用的 XHR 请求，找到港口区域查询和泊位查询接口。在授权账号下，请求头可由登录 JWT 推导，只需配置一个凭证。</span></p></div>
+  <div class="step"><div class="n"><span data-l="en">02 · Locate</span><span data-l="zh">02 · 定位</span></div><h3><span data-l="en">Find Yangtze ports</span><span data-l="zh">筛选长江港口</span></h3><p><span data-l="en">Queried six overlapping rectangles, since one big box timed out. Ports were then filtered by haversine distance (≤ 30 km) to a 70-point polyline of the main channel.</span><span data-l="zh">分六个相互重叠的矩形查询（一次查大范围会超时），再按与 70 个点构成的主航道折线的球面距离（≤ 30 km）筛选港口。</span></p></div>
+  <div class="step"><div class="n"><span data-l="en">03 · Collect</span><span data-l="zh">03 · 采集</span></div><h3><span data-l="en">Resumable scraping</span><span data-l="zh">断点续抓</span></h3><p><span data-l="en">Each port's berths are cached to their own file with atomic writes. Timeouts and expired tokens just mean re-running the command: only the missing ports get fetched.</span><span data-l="zh">每个港口的泊位单独缓存成文件，原子写入。遇到超时或 token 过期只需重跑命令，只会补抓缺失的港口。</span></p></div>
+  <div class="step"><div class="n"><span data-l="en">04 · Deliver</span><span data-l="zh">04 · 交付</span></div><h3><span data-l="en">Clean + export</span><span data-l="zh">清洗与导出</span></h3><p><span data-l="en">1,828 berths × 95 raw fields go into one bilingual Excel workbook, with fill-rate stats per field and an option to drop the ~55 always-empty columns.</span><span data-l="zh">1,828 个泊位 × 95 个原始字段整理成一份中英双语 Excel，附每个字段的填充率，并可去掉约 55 个全空字段。</span></p></div>
 </div>
 
-<h2>The drifting-marker bug</h2>
+<h2><span data-l="en">The drifting-marker bug</span><span data-l="zh">标记漂移 bug</span></h2>
 <div class="two">
   <div>
-    <p>The berth coordinates and the nautical chart both use <b>WGS-84</b>, the raw GPS system. Satellite maps served inside China use <b>GCJ-02</b>, a system that by regulation shifts every point by a non-linear offset. Along the Yangtze that offset is about 300–600 m, and its size changes from place to place.</p>
-    <p>So the same latitude/longitude lands in a different spot on each base map. Switching layers made every marker jump.</p>
-    <p><b>Fix:</b> store everything in WGS-84 as the single source of truth. When the active layer is GCJ-02, run each point through the published WGS-84 → GCJ-02 transform before drawing it. The transform is a polynomial plus sine terms, converted from metres to degrees with the Krasovsky ellipsoid. Re-project from the original coordinates every time, never from the previous output, so errors don't pile up.</p>
-    <p class="muted">Try it: switch to <i>Satellite (China, GCJ-02)</i>, zoom in on a port, and untick <i>Coordinate correction</i>. Click any berth to see the size of the offset at that exact spot.</p>
+    <p data-l="en">The berth coordinates and the nautical chart both use <b>WGS-84</b>, the raw GPS system. Satellite maps served inside China use <b>GCJ-02</b>, a system that by regulation shifts every point by a non-linear offset. Along the Yangtze that offset is about 300–600 m, and its size changes from place to place.</p>
+    <p data-l="en">So the same latitude/longitude lands in a different spot on each base map. Switching layers made every marker jump.</p>
+    <p data-l="en"><b>Fix:</b> store everything in WGS-84 as the single source of truth. When the active layer is GCJ-02, run each point through the published WGS-84 → GCJ-02 transform before drawing it. The transform is a polynomial plus sine terms, converted from metres to degrees with the Krasovsky ellipsoid. Re-project from the original coordinates every time, never from the previous output, so errors don't pile up.</p>
+    <p class="muted" data-l="en">Try it: switch to <i>Satellite (China, GCJ-02)</i>, zoom in on a port, and untick <i>Coordinate correction</i>. Click any berth to see the size of the offset at that exact spot.</p>
+    <p data-l="zh">泊位坐标和海图都使用 <b>WGS-84</b>（GPS 原始坐标）。国内提供的卫星图使用 <b>GCJ-02</b>，按规定对每个点加了一个非线性偏移。在长江沿线这个偏移约 300–600 米，而且各地大小不同。</p>
+    <p data-l="zh">所以同一组经纬度在不同底图上落在不同位置，一切换底图，标记就"跳"。</p>
+    <p data-l="zh"><b>修复方法：</b>所有数据统一用 WGS-84 存储，作为唯一可信来源。当前底图是 GCJ-02 时，在绘制前把每个点用公开的 WGS-84 → GCJ-02 公式转换一次（多项式加正弦项，再用克拉索夫斯基椭球把米换算成度）。每次都从原始坐标重新计算，而不是在上一次的结果上再转，避免误差累积。</p>
+    <p class="muted" data-l="zh">试一试：切到「国内卫星图」，放大到一个港口，取消勾选「坐标纠偏」。点击任一泊位，可以看到该位置的偏移量。</p>
   </div>
   <div class="card" aria-label="Diagram: one coordinate drawn on two map systems">
     <svg viewBox="0 0 420 230" width="100%" role="img" aria-labelledby="dgT">
@@ -147,7 +165,7 @@ footer{padding:48px 0;color:var(--muted);font-size:13px}
   </div>
 </div>
 
-<h2>Stack</h2>
+<h2><span data-l="en">Stack</span><span data-l="zh">技术栈</span></h2>
 <div class="tags">
   <span>Python</span><span>curl_cffi</span><span>openpyxl</span><span>pytest</span>
   <span>JavaScript</span><span>Leaflet</span><span>OpenSeaMap</span><span>Haversine / geodesy</span><span>WGS-84 ↔ GCJ-02</span>
@@ -163,13 +181,18 @@ footer{padding:48px 0;color:var(--muted);font-size:13px}
   const D = window.YZ_DATA;
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const fmt = n => n.toLocaleString('en-US');
+  const ZH = () => document.documentElement.lang==='zh-CN';
+  const T = (en,zh) => ZH()?zh:en;
 
   // ── stats
   const s = D.total;
-  document.getElementById('stats').innerHTML = [
-    [fmt(s.berths),'berths collected'],[s.ports,'ports with berths'],
-    ['~1,600 km','Chongqing → Shanghai'],[s.fields,'raw fields per berth']
-  ].map(([b,t])=>`<div class="stat"><b>${b}</b><span>${t}</span></div>`).join('');
+  function renderStats(){ document.getElementById('stats').innerHTML = [
+    [fmt(s.berths),T('berths collected','个泊位')],[s.ports,T('ports with berths','个有泊位的港口')],
+    ['~1,600 km',T('Chongqing → Shanghai','重庆 → 上海')],[s.fields,T('raw fields per berth','每个泊位的原始字段')]
+  ].map(([b,t])=>`<div class="stat"><b>${b}</b><span>${t}</span></div>`).join(''); }
+  renderStats();
+  const FT = {'Dry Cargo':['Dry cargo','干货'],'Tanker':['Tanker','油品/液货'],'Both':['Both','两者兼有']};
+  const ft = k => FT[k]?T(FT[k][0],FT[k][1]):k;
 
   // ── WGS-84 → GCJ-02
   const PI=Math.PI, A=6378245.0, EE=0.00669342162296594323;
@@ -214,9 +237,9 @@ footer{padding:48px 0;color:var(--muted);font-size:13px}
       color:sampled.has(p.c)?css('--accent'):'#fff',fillColor:colorOf(p.tank>p.dry?'Tanker':'Dry Cargo'),fillOpacity:.75});
     m.wgs=[p.lat,p.lon];
     const t=p.dry+p.tank+p.both;
-    m.bindPopup(()=>`<h4>${p.cn} · ${p.en}</h4><span class="pk">${p.c}</span><br>${p.n} berths
+    m.bindPopup(()=>`<h4>${p.cn} · ${p.en}</h4><span class="pk">${p.c}</span><br>${p.n} ${T('berths','个泊位')}
       <div class="bar"><i style="width:${p.dry/t*100}%;background:${css('--dry')}"></i><i style="width:${p.tank/t*100}%;background:${css('--tank')}"></i><i style="width:${p.both/t*100}%;background:${css('--both')}"></i></div>
-      Dry cargo ${p.dry} · Tanker ${p.tank}${p.both?` · Both ${p.both}`:''}${sampled.has(p.c)?'<br><i>Zoom in for sample berths</i>':''}`);
+      ${ft('Dry Cargo')} ${p.dry} · ${ft('Tanker')} ${p.tank}${p.both?` · ${ft('Both')} ${p.both}`:''}${sampled.has(p.c)?'<br><i>'+T('Zoom in for sample berths','放大查看样本泊位')+'</i>':''}`);
     portLayer.addLayer(m); all.push(m);
   });
   D.sample.forEach(b=>{
@@ -224,10 +247,10 @@ footer{padding:48px 0;color:var(--muted);font-size:13px}
     m.wgs=[b.lat,b.lon];
     m.bindPopup(()=>{
       const g=toGcj(b.lat,b.lon), off=Math.round(metres(m.wgs,g)), port=portByCode[b.p];
-      return `<h4>Berth ${b.name}</h4><span class="pk">${port.cn} · ${port.en}</span><br>
-        ${b.ft}${b.bt?` · ${b.bt}`:''}<br>
-        ${b.len?`Length ${b.len} m<br>`:''}${b.dwt?`Max DWT ${fmt(b.dwt)} t<br>`:''}
-        <span class="pk">WGS-84 ${b.lat.toFixed(5)}, ${b.lon.toFixed(5)}<br>GCJ-02 offset here: <b>${off} m</b></span>`;
+      return `<h4>${T('Berth','泊位')} ${b.name}</h4><span class="pk">${port.cn} · ${port.en}</span><br>
+        ${ft(b.ft)}${b.bt?` · ${b.bt}`:''}<br>
+        ${b.len?`${T('Length','长度')} ${b.len} m<br>`:''}${b.dwt?`${T('Max DWT','最大载重吨')} ${fmt(b.dwt)} t<br>`:''}
+        <span class="pk">WGS-84 ${b.lat.toFixed(5)}, ${b.lon.toFixed(5)}<br>${T('GCJ-02 offset here','此处 GCJ-02 偏移')}: <b>${off} m</b></span>`;
     });
     berthLayer.addLayer(m); all.push(m);
   });
@@ -258,6 +281,12 @@ footer{padding:48px 0;color:var(--muted);font-size:13px}
       map.flyTo(ll, sampled.has(p.c)?13:11, {duration:1}); };
     pl.appendChild(b);
   });
+  const root=document.documentElement;
+  function setLang(l){ root.lang=l==='zh'?'zh-CN':'en'; try{localStorage.setItem('cw-lang',l)}catch(e){}
+    document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===l)));
+    renderStats(); map.closePopup(); }
+  setLang(root.lang==='zh-CN'?'zh':'en');
+  document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
 })();
 </script>
 </body>
