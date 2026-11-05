@@ -110,6 +110,7 @@ h1,h2,h3{line-height:1.12;text-wrap:balance}
 .pmedia.photo.real{background:#0c0e0d}
 .pmedia.photo.real video{position:absolute;inset:0}
 .pmedia.photo.real{position:relative}
+.pmedia.photo.real img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
 
 /* cards */
 main{width:min(1400px,100%);margin:0 auto;padding-block:34px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
@@ -216,7 +217,7 @@ var P=[
  b:{en:['Set the technical route and split the work across the team.','Formulated magnetorheological-fluid and magnetic-sponge composites, and built the compliant body that deforms under the field.','Measured deformation and locomotion with camera tracking, and compared reinforcement designs in COMSOL FEA before going back to the bench.'],
     zh:['确定技术路线并组织团队分工。','配制磁流变液与磁性海绵复合材料，搭建在磁场下产生形变的柔性执行结构。','用相机追踪法测量形变与运动轨迹，并先用 COMSOL 有限元仿真比较加固方案，再回到实验台验证。']},
  cite:'Patent: Tang F., Zhang H., <b>Wang C.</b>, et al. <i>A Peristaltic Pipeline Soft Robot Based on Electromagnetic Control.</i>'},
-{id:'bus',g:'ux',year:'2026',tags:['UX design','Live transit data','LLM prototyping','Vercel'],
+{id:'bus',g:'ux',year:'2026',img:'posts/bus/screen.jpg',poster:'posts/bus/thumb.jpg',tags:['UX design','Live transit data','LLM prototyping','Vercel'],
  links:[{k:'details',u:'posts/bus/'},{k:'demo',u:'https://week3-bay-gamma.vercel.app/'},{k:'github',u:'https://github.com/wangcy0928/Week3'}],
  t:{en:'From Here: A Smarter SEPTA Bus Stop Screen',zh:'From Here：更聪明的 SEPTA 公交站屏幕'},
  s:{en:'A bus stop screen that turns the wait into nearby places you can actually reach in time.',zh:'把等车时间变成"来得及去的地方"的公交站屏幕。'},
@@ -247,7 +248,7 @@ function x(f){return typeof f==='string'?f:(f[lang]||f.en)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 var GROUPS=['robo','ux','data'];
 function thumbHtml(p){return p.poster?'<div class="thumb photo" aria-hidden="true"><img src="'+p.poster+'" alt=""></div>':'<div class="thumb" aria-hidden="true">'+SVG[p.id]+'</div>'}
-function mediaHtml(p){if(p.split)return '<div class="pmedia split'+(p.stack?' stack':'')+'">'+p.split.map(function(s,i){return '<div class="half'+(i?' real':' sim')+'"><video src="'+s.v+'" poster="'+s.p+'" autoplay muted loop playsinline aria-label="'+x(s.l||s.a)+'"></video>'+(s.l?'<span class="vlabel">'+x(s.l)+'</span>':'')+'</div>'}).join('')+'</div>';return p.vid?'<div class="pmedia photo'+(p.real?' real':'')+'"><video src="'+p.vid+'" poster="'+p.poster+'" autoplay muted loop playsinline aria-label="'+x(p.t)+'"></video></div>':'<div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div>'}
+function mediaHtml(p){if(p.img)return '<div class="pmedia photo real"><img src="'+p.img+'" alt="'+x(p.t)+'"></div>';if(p.split)return '<div class="pmedia split'+(p.stack?' stack':'')+'">'+p.split.map(function(s,i){return '<div class="half'+(i?' real':' sim')+'"><video src="'+s.v+'" poster="'+s.p+'" autoplay muted loop playsinline aria-label="'+x(s.l||s.a)+'"></video>'+(s.l?'<span class="vlabel">'+x(s.l)+'</span>':'')+'</div>'}).join('')+'</div>';return p.vid?'<div class="pmedia photo'+(p.real?' real':'')+'"><video src="'+p.vid+'" poster="'+p.poster+'" autoplay muted loop playsinline aria-label="'+x(p.t)+'"></video></div>':'<div class="pmedia" aria-hidden="true">'+SVG[p.id]+'</div>'}
 
 function render(){
   var L=I[lang];
